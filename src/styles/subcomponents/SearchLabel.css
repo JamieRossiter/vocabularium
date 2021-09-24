@@ -1,0 +1,13 @@
+/* 
+  SearchLabel.tsx Stylesheet
+*/
+
+.search-label-icon {
+  margin-bottom: -0.2em;
+  margin-right: 0.3em;
+}
+
+.search-label-text {
+  display: inline-block;
+  margin-top: 0em;
+}

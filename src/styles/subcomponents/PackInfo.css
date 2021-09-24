@@ -1,0 +1,11 @@
+/* 
+  PackInfo.tsx Stylesheet
+*/
+
+.pack-info-header {
+  font-size: 1.3em;
+}
+
+.pack-info-dateCreated {
+  margin-top: -0.9em;
+}

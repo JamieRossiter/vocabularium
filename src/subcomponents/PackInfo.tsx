@@ -1,3 +1,4 @@
+import "../styles/subcomponents/PackInfo.css";
 
 type PackInfoProps = {
     title: string,
@@ -7,8 +8,8 @@ type PackInfoProps = {
 const PackInfo = (props: PackInfoProps) => {
     return(
         <>
-            <h1>{props.title}</h1>
-            <p>{props.dateCreated}</p>
+            <h2 className="pack-info-header">{props.title}</h2>
+            <p className="pack-info-dateCreated">Created {props.dateCreated}</p>
         </>
     )
 }

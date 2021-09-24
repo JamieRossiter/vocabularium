@@ -1,0 +1,14 @@
+/* 
+  LanguageFlag.tsx Stylesheet
+*/
+
+.language-flag-label {
+  display: block;
+  text-align: center;
+  margin-top: -0.5px;
+}
+
+.language-flag-icon {
+  display: block;
+  margin: auto;
+}

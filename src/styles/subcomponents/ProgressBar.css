@@ -1,0 +1,21 @@
+/* 
+  ProgressBar.tsx Stylesheet
+*/
+
+.progress-bar-numerical {
+  font-size: 0.8em;
+}
+
+.MuiLinearProgress-root {
+  height: 0.7em !important;
+  width: 70%;
+  margin-top: -0.8em !important;
+}
+
+.MuiLinearProgress-barColorPrimary {
+  background-color: #9575cd !important;
+}
+
+.MuiLinearProgress-barColorSecondary {
+  background-color: #9575cd !important;
+}

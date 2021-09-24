@@ -1,4 +1,5 @@
 import Flag from "react-flagpack";
+import "../styles/subcomponents/LanguageFlag.css";
 
 type LanguageFlagProps = {
     countryCode: string, // e.g. ID
@@ -8,8 +9,8 @@ type LanguageFlagProps = {
 const LanguageFlag = (props: LanguageFlagProps) => {
     return(
         <>
-            <Flag code={props.countryCode} size="l" />
-            <p>{props.languageShorthand}</p>
+            <Flag className="language-flag-icon" code={props.countryCode} size="l" />
+            <p className="language-flag-label">{props.languageShorthand}</p>
         </>
     )
 }

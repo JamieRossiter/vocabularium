@@ -1,0 +1,12 @@
+/* 
+  LanguageDropdown.tsx Stylesheet
+*/
+
+.language-dropdown-lang-flag {
+  margin-left: 0.3em;
+  margin-right: 0.5em;
+}
+
+.MuiFormControl-fullWidth.language-dropdown-lang-select {
+  width: 70%;
+}

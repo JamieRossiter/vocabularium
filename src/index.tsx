@@ -21,10 +21,11 @@ import CardList from "./components/CardList";
 import PackDetails from "./components/PackDetails";
 import PackCreate from "./containers/PackCreate";
 import PackView from "./containers/PackView";
+import SearchLabel from "./subcomponents/SearchLabel";
 
 ReactDOM.render(
   <React.StrictMode>
-    <PackCreate />
+    <WordSearchBar />
   </React.StrictMode>,
   document.getElementById('root')
 );

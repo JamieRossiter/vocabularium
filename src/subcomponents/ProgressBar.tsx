@@ -1,4 +1,5 @@
 import { LinearProgress } from "@material-ui/core";
+import "../styles/subcomponents/ProgressBar.css";
 
 type ProgressBarProps = {
     progressValue: number,
@@ -13,7 +14,7 @@ const ProgressBar = (props: ProgressBarProps) => {
 
     return(
         <> 
-            <p>{props.progressValue}/{props.totalValue}</p>
+            <p className="progress-bar-numerical">{props.progressValue}/{props.totalValue}</p>
             <LinearProgress variant="determinate" value={createPercentage(props.progressValue, props.totalValue)} />
         </>
     )
