@@ -19,10 +19,12 @@ import WordCreationList from "./components/WordCreationList";
 import HeaderBar from "./components/HeaderBar";
 import CardList from "./components/CardList";
 import PackDetails from "./components/PackDetails";
+import PackCreate from "./containers/PackCreate";
+import PackView from "./containers/PackView";
 
 ReactDOM.render(
   <React.StrictMode>
-    <PackDetails />
+    <PackCreate />
   </React.StrictMode>,
   document.getElementById('root')
 );
