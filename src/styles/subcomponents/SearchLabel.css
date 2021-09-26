@@ -2,12 +2,19 @@
   SearchLabel.tsx Stylesheet
 */
 
+.search-label-icon,
+.search-label-text {
+  position: relative;
+}
+
 .search-label-icon {
+  bottom: 0.1em;
   margin-bottom: -0.2em;
   margin-right: 0.3em;
 }
 
 .search-label-text {
+  bottom: 0.2em;
   display: inline-block;
   margin-top: 0em;
 }

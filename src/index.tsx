@@ -22,10 +22,11 @@ import PackDetails from "./components/PackDetails";
 import PackCreate from "./containers/PackCreate";
 import PackView from "./containers/PackView";
 import SearchLabel from "./subcomponents/SearchLabel";
+import SectionHeading from "./components/SectionHeading";
 
 ReactDOM.render(
   <React.StrictMode>
-    <WordSearchBar />
+    <ProgressBar totalValue={10} progressValue={5} />
   </React.StrictMode>,
   document.getElementById('root')
 );

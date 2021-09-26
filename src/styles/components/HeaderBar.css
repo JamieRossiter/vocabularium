@@ -1,0 +1,26 @@
+/* 
+  HeaderBar.tsx Stylesheet
+*/
+
+.header-bar-container {
+  margin: auto;
+  width: 50%;
+  min-width: 30em;
+  height: 5em;
+  background-color: lightgrey;
+  border-bottom-left-radius: 1em;
+  border-bottom-right-radius: 1em;
+}
+
+.header-bar-logo {
+  position: relative;
+  bottom: 1.5em;
+  text-align: center;
+}
+
+.header-bar-create-button {
+  z-index: 2;
+  position: relative;
+  top: 1.5em;
+  margin-left: 2em;
+}

@@ -1,0 +1,12 @@
+/* 
+  SectionHeading.tsx Stylesheet
+*/
+
+.section-heading-component {
+  float: left;
+  width: 33.3%;
+}
+
+.section-heading-heading {
+  text-align: center;
+}

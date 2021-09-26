@@ -1,0 +1,18 @@
+/* 
+  WordSearchBar.tsx Stylesheet
+*/
+
+.word-search-bar-label,
+.word-search-bar-more-info-button {
+  text-align: center;
+}
+
+.word-search-bar-more-info-button {
+  position: relative;
+  bottom: 0.5em;
+}
+
+.word-search-bar-input {
+  margin-left: 2em;
+  margin-right: 2em;
+}

@@ -6,10 +6,13 @@
   font-size: 0.8em;
 }
 
+.progress-bar-bar-container {
+  width: 70%;
+  margin-top: -0.8em;
+}
+
 .MuiLinearProgress-root {
   height: 0.7em !important;
-  width: 70%;
-  margin-top: -0.8em !important;
 }
 
 .MuiLinearProgress-barColorPrimary {

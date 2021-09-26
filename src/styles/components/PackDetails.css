@@ -1,0 +1,16 @@
+/* 
+  PackDetails.tsx Stylesheet
+*/
+
+.pack-details-component {
+  float: left;
+  width: 33.3%;
+}
+
+.pack-details-pack-info {
+  text-align: center;
+}
+
+.pack-details-language-flag {
+  margin-top: 1em;
+}
