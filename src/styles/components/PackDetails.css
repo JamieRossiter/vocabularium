@@ -14,3 +14,11 @@
 .pack-details-language-flag {
   margin-top: 1em;
 }
+
+.pack-details-description {
+  clear: both;
+  text-align: center;
+  color: #757575;
+  width: 70%;
+  margin: auto;
+}

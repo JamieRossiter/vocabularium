@@ -8,8 +8,7 @@ const LanguageDropdown = () => {
         <>
             <div className="language-dropdown-input-container" >
                 <FormControl fullWidth>
-                    <InputLabel>Select Language</InputLabel>
-                    <Select autoWidth value="ID">
+                    <Select variant="outlined" autoWidth value="ID">
                         <MenuItem value="ID"><Flag className="language-dropdown-lang-flag" code="ID" size="m" />Indonesian</MenuItem>
                     </Select>
                 </FormControl>

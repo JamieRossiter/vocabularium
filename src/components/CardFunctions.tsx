@@ -1,12 +1,21 @@
 import { Button } from "@material-ui/core";
+import { Shuffle, FlipToBack, Share } from "@material-ui/icons"; 
 import "../styles/components/CardFunctions.css";
 
 const CardFunctions = () => {
     return(
         <>
-            <Button className="card-functions-button" variant="outlined">Shuffle</Button>
-            <Button className="card-functions-button" variant="outlined">Flip All</Button>
-            <Button className="card-functions-button" variant="outlined">Share</Button>
+            <div className="card-functions-container">
+                <div className="card-functions-button-container">
+                    <Button className="card-functions-button" size="large" variant="outlined" startIcon={<Shuffle />}>Shuffle</Button>
+                </div>
+                <div className="card-functions-button-container">
+                    <Button className="card-functions-button" size="large" variant="outlined" startIcon={<FlipToBack />}>Flip All</Button>
+                </div>
+                <div className="card-functions-button-container">
+                    <Button className="card-functions-button" size="large" variant="outlined" startIcon={<Share />}>Share</Button>
+                </div>
+            </div>
         </>
     )
 }

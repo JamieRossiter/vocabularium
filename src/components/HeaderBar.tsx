@@ -8,7 +8,7 @@ const HeaderBar = () => {
         <>
             <div className="header-bar-container">
                 <div className="header-bar-create-button">
-                    <Button variant="text" startIcon={ <AddBox /> } >Create Pack</Button>
+                    <Button variant="text" startIcon={ <AddBox /> }>Create</Button>
                 </div>
                 <div className="header-bar-logo" >
                     <Logo />    

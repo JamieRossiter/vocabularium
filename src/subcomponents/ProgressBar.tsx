@@ -14,9 +14,11 @@ const ProgressBar = (props: ProgressBarProps) => {
 
     return(
         <> 
-            <p className="progress-bar-numerical">{props.progressValue}/{props.totalValue}</p>
-            <div className="progress-bar-bar-container">
-                <LinearProgress variant="determinate" value={createPercentage(props.progressValue, props.totalValue)} />
+            <div className="progress-bar-container">
+                <p className="progress-bar-numerical">{props.progressValue}/{props.totalValue}</p>
+                <div className="progress-bar-bar-container">
+                    <LinearProgress variant="determinate" value={createPercentage(props.progressValue, props.totalValue)} />
+                </div>
             </div>
         </>
     )

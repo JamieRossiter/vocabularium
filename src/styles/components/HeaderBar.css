@@ -4,10 +4,9 @@
 
 .header-bar-container {
   margin: auto;
-  width: 50%;
-  min-width: 30em;
+  margin-bottom: 2em;
   height: 5em;
-  background-color: lightgrey;
+  background-color: #d1c4e9;
   border-bottom-left-radius: 1em;
   border-bottom-right-radius: 1em;
 }

@@ -2,8 +2,12 @@
   CreatePackDetails.tsx Stylesheet
 */
 
-.MuiInput-root.card-pack-details-input {
-  width: 70%;
+.card-pack-details-input-container {
+  margin-top: 1em;
+}
+
+.card-pack-details-input {
+  width: 100%;
 }
 
 .card-pack-details-input-label {

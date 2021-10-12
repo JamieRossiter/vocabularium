@@ -2,7 +2,21 @@
   CardFunctions.tsx Stylesheet
 */
 
-.card-functions-button {
-  margin-left: 2em !important;
-  margin-right: 2em !important;
+.card-functions-container {
+  margin-top: 2em;
+}
+
+.card-functions-button-container {
+  float: left;
+  width: 33.3%;
+  padding-bottom: 1em;
+  text-align: center;
+}
+
+@media only screen and (max-width: 515px) {
+  .card-functions-button-container {
+    width: 100%;
+    margin-top: 0.1em;
+    margin-bottom: 0.1em;
+  }
 }

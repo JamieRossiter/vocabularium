@@ -10,9 +10,13 @@
 .word-search-bar-more-info-button {
   position: relative;
   bottom: 0.5em;
+  margin-bottom: 1em;
 }
 
 .word-search-bar-input {
-  margin-left: 2em;
-  margin-right: 2em;
+  width: 100%;
+}
+
+.word-search-bar-label {
+  font-size: 0.8em;
 }

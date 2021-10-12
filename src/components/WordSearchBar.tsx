@@ -7,13 +7,13 @@ const WordSearchBar = () => {
     return(
         <>
             <div className="word-search-bar-label">
-                <p>Selected Vocab</p>
+                <h2>Selected Vocab</h2>
             </div>
             <div className="word-search-bar-more-info-button">
-                <Button variant="outlined">What is this?</Button>
+                <Button variant="outlined" size="small">What is this?</Button>
             </div>
             <div className="word-search-bar-input">
-                <Autocomplete freeSolo options={["hi", "wassup"]} renderInput={params => <TextField {...params} label={ <SearchLabel /> } />} />
+                <Autocomplete freeSolo options={["hi", "wassup"]} renderInput={params => <TextField variant="outlined" {...params} label={ <SearchLabel /> } />} />
             </div>
         </>
     )

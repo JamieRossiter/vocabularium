@@ -26,7 +26,7 @@ import SectionHeading from "./components/SectionHeading";
 
 ReactDOM.render(
   <React.StrictMode>
-    <ProgressBar totalValue={10} progressValue={5} />
+    <PackCreate />
   </React.StrictMode>,
   document.getElementById('root')
 );
