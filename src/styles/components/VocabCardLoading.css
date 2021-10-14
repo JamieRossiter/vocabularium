@@ -1,0 +1,23 @@
+/* 
+  VocabCardLoading.tsx Stylesheet
+*/
+
+.vocab-card-loading-card.MuiCard-root {
+  background-color: #fafafa !important;
+  height: 10em !important;
+}
+
+.vocab-card-loading-spinner.MuiCircularProgress-colorPrimary {
+  color: #9575cd !important;
+}
+
+.vocab-card-loading-spinner-container {
+  margin-top: 2em;
+}
+
+.vocab-card-loading-container {
+  min-width: 10em;
+  width: 50%;
+  text-align: center;
+  margin: auto;
+}

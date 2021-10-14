@@ -4,28 +4,14 @@ import PackDetails from "../components/PackDetails";
 import ProgressBar from "../subcomponents/ProgressBar";
 import CardList from "../components/CardList";
 import CardFunctions from "../components/CardFunctions";
-import { Skeleton } from "@material-ui/lab";
+import { Card, Pack } from "../CustomTypes";
 import "../styles/containers/PackView.css";
 
-type Pack = {
-    id: string,
-    title: string,
-    dateCreated: string,
-    description: string,
-    languageOptions: {
-        languageLonghand: string,
-        languageShorthand: string,
-        countryCode: string
-    },
-    cards: string
+type PackViewProps = {
+    packId: string
 }
 
-type Card = {
-    untranslated: string,
-    translated: string
-}
-
-const PackView = (props: { packId: string }) => {
+const PackView = (props: PackViewProps) => {
 
     const [packData, updatePackData] = React.useState<Pack>();
     const [cardsData, updateCardsData] = React.useState<Array<Card>>();
@@ -41,9 +27,11 @@ const PackView = (props: { packId: string }) => {
 
     // Fetch cards data
     React.useEffect(() => {
-        fetch("/dummyData/dummy_cards.json", { method: "GET" })
-        .then(response => response.json())
-        .then(data => updateCardsData(data));
+        setTimeout(() => {
+            fetch("/dummyData/dummy_cards.json", { method: "GET" })
+            .then(response => response.json())
+            .then(data => updateCardsData(data.cards));
+        }, 3000)
     }, [])
 
 
@@ -56,7 +44,7 @@ const PackView = (props: { packId: string }) => {
                 <div className="pack-view-sticky">
                     <CardFunctions />
                 </div>
-                <CardList />
+                <CardList cards={cardsData} language={packData?.languageOptions.languageLonghand} />
             </div>
         </>
     )

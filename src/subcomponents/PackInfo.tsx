@@ -9,7 +9,7 @@ type PackInfoProps = {
 const PackInfo = (props: PackInfoProps) => {
     return(
         <>
-            <h2 className="pack-info-header">{props.title ?? <Skeleton animation="wave" height={40} />}</h2>
+            <h2 className="pack-info-header">{props.title ?? <Skeleton animation="wave" height={30} />}</h2>
             <p className="pack-info-dateCreated">{props.dateCreated ? `Created ${props.dateCreated}` : <Skeleton variant="text" animation="wave" />}</p>
         </>
     )
