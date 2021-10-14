@@ -1,0 +1,36 @@
+{
+    "cards": [
+        {
+            "untranslated": "microwave",
+            "translated": "magnetron" 
+        },
+        {
+            "untranslated": "fridge",
+            "translated": "koelkast"
+        },
+        {
+            "untranslated": "stove",
+            "translated": "fornuis"
+        },
+        {
+            "untranslated": "sink",
+            "translated": "wasbak"
+        },
+        {
+            "untranslated": "toaster",
+            "translated": "tosti apparaat"
+        },
+        {
+            "untranslated": "kettle",
+            "translated": "ketel"
+        },
+        {
+            "untranslated": "oven",
+            "translated": "oven"
+        },
+        {
+            "untranslated": "freezer",
+            "translated": "diepvries"
+        }
+    ]
+}

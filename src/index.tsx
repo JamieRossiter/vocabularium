@@ -26,7 +26,7 @@ import SectionHeading from "./components/SectionHeading";
 
 ReactDOM.render(
   <React.StrictMode>
-    <PackCreate />
+    <PackView packId={"2349857fhdsj"} />
   </React.StrictMode>,
   document.getElementById('root')
 );

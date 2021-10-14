@@ -3,10 +3,9 @@
 */
 
 .language-flag-label {
-  display: block;
-  text-align: right;
+  display: none;
+  text-align: center;
   margin-top: -0.5px;
-  padding-right: 0.3em;
 }
 
 .language-flag-icon {
