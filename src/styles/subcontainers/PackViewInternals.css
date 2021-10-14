@@ -1,0 +1,11 @@
+/* 
+  PackViewInternals.tsx Stylesheet
+*/
+
+.pack-view-internals-sticky {
+  overflow: hidden;
+  background-color: white;
+  z-index: 2;
+  top: 0;
+  position: sticky;
+}

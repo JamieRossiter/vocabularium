@@ -10,7 +10,7 @@ const CardFunctions = () => {
                     <Button className="card-functions-button" size="large" variant="outlined" startIcon={<Shuffle />}>Shuffle</Button>
                 </div>
                 <div className="card-functions-button-container">
-                    <Button className="card-functions-button" size="large" variant="outlined" startIcon={<FlipToBack />}>Flip All</Button>
+                    <Button className="card-functions-button" size="large" variant="outlined" startIcon={<FlipToBack />}>Reset All</Button>
                 </div>
                 <div className="card-functions-button-container">
                     <Button className="card-functions-button" size="large" variant="outlined" startIcon={<Share />}>Share</Button>

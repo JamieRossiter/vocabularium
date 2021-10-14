@@ -7,14 +7,6 @@
   margin: auto;
 }
 
-.pack-view-sticky {
-  overflow: hidden;
-  background-color: white;
-  z-index: 2;
-  top: 0;
-  position: sticky;
-}
-
 @media only screen and (max-width: 845px) {
   .pack-view-container {
     width: 80%;

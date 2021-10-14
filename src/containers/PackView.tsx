@@ -1,11 +1,9 @@
 import React from "react";
 import HeaderBar from "../components/HeaderBar";
 import PackDetails from "../components/PackDetails";
-import ProgressBar from "../subcomponents/ProgressBar";
-import CardList from "../components/CardList";
-import CardFunctions from "../components/CardFunctions";
 import { Card, Pack } from "../CustomTypes";
 import "../styles/containers/PackView.css";
+import PackViewInternals from "../subcontainers/PackViewInternals";
 
 type PackViewProps = {
     packId: string
@@ -34,17 +32,12 @@ const PackView = (props: PackViewProps) => {
         }, 3000)
     }, [])
 
-
     return(
         <>
             <div className="pack-view-container">
                 <HeaderBar />
                 <PackDetails packTitle={packData?.title} packDescription={packData?.description} packDateCreated={packData?.dateCreated} packFlagInfo={packData?.languageOptions} />
-                <ProgressBar progressValue={3} totalValue={10} />
-                <div className="pack-view-sticky">
-                    <CardFunctions />
-                </div>
-                <CardList cards={cardsData} language={packData?.languageOptions.languageLonghand} />
+                <PackViewInternals cardList={{cards: cardsData, language: packData?.languageOptions.languageLonghand}} progressBar={{totalValue: cardsData?.length}}  />
             </div>
         </>
     )

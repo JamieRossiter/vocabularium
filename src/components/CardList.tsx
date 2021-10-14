@@ -9,10 +9,22 @@ import "../styles/components/CardList.css";
 
 type CardListProps = {
     cards?: Array<Card>,
-    language?: string
+    language?: string,
+    progress: Function
 }
 
 const CardList = (props: CardListProps) => {
+
+    const [flipCount, updateFlipCount] = React.useState<number>(0);
+
+    React.useEffect(() => {
+        props.progress(flipCount);
+    }, [flipCount])
+
+    function handleFlipCountUpdated(isFlipped: boolean){
+        if(isFlipped) updateFlipCount(flipCount + 1);
+        else updateFlipCount(flipCount - 1);
+    }
 
     function generateCards(cardData?: Array<Card>){
 
@@ -20,7 +32,7 @@ const CardList = (props: CardListProps) => {
 
         if(cardData){
             generatedCards = cardData.map(data => {
-                return <ListItem key={data.untranslated}><div className="card-list-card-container"><VocabCard vocab={data} language={props.language ?? "UNKNOWN"} /></div></ListItem>;
+                return <ListItem key={data.untranslated}><div className="card-list-card-container"><VocabCard vocab={data} language={props.language ?? "UNKNOWN"} flipped={handleFlipCountUpdated} /></div></ListItem>;
             });
         } else {
             for(let i = 0; i < 10; i++){

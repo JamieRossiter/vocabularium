@@ -2,14 +2,19 @@ import { LinearProgress } from "@material-ui/core";
 import "../styles/subcomponents/ProgressBar.css";
 
 type ProgressBarProps = {
-    progressValue: number,
-    totalValue: number
+    progressValue?: number,
+    totalValue?: number
 }
 
 const ProgressBar = (props: ProgressBarProps) => {
 
-    function createPercentage(value: number, maxValue: number): number{
-        return value / maxValue * 100;
+    function createPercentage(value?: number, maxValue?: number): number{
+        if(value && maxValue){
+            return value / maxValue * 100;
+        } else {
+            return 0;
+        }
+    
     }
 
     return(
