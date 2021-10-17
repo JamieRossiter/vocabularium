@@ -12,7 +12,8 @@ type PackViewInternalsProps = {
     },
     progressBar: {
         totalValue?: number
-    }
+    },
+    isEditable: boolean
 }
 
 const PackViewInternals = (props: PackViewInternalsProps) => {
@@ -21,6 +22,7 @@ const PackViewInternals = (props: PackViewInternalsProps) => {
     const [cardsProgress, updateCardsProgress] = React.useState<number>(0);
     const [forceFlipToBack, updateForceFlipToBack] = React.useState<boolean>(false);
     const [swapSides, updateSwapSides] = React.useState<boolean>(false);
+    const [isEditState, updateIsEditState] = React.useState<boolean>(false);
 
     function handleProgressUpdate(progressValue: number){
         updateCardsProgress(progressValue);
@@ -44,13 +46,17 @@ const PackViewInternals = (props: PackViewInternalsProps) => {
         }
     }
 
+    function handleEditStateChange(state: boolean){
+        updateIsEditState(state);
+    }
+
     return(
         <>
             <div className="pack-view-internals-sticky">
                 <ProgressBar progressValue={cardsProgress} totalValue={props.progressBar.totalValue} />
-                <CardFunctions functionTriggered={{shuffle: handleCardShuffleTrigger, flipAll: handleCardFlipAllTrigger}} />
+                <CardFunctions functionTriggered={{shuffle: handleCardShuffleTrigger, flipAll: handleCardFlipAllTrigger}} disabled={isEditState} />
             </div>
-            <CardList cards={shuffledCards.length > 0 ? shuffledCards : props.cardList.cards} language={props.cardList.language} progress={handleProgressUpdate} forceFlipToBack={forceFlipToBack} swapSides={swapSides} />
+            <CardList cards={shuffledCards.length > 0 ? shuffledCards : props.cardList.cards} language={props.cardList.language} progress={handleProgressUpdate} flipOptions={{forceFlipToBack: forceFlipToBack, swapSides: swapSides}} editOptions={{isEditable: props.isEditable, isEditState: handleEditStateChange}} />
         </>
     )
 

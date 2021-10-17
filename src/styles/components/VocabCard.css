@@ -1,19 +1,24 @@
 /* 
-  VocabCard.tsx Stylesheet
+  VocabCard.tsx, VocabCardButton.tsx, VocabCardLoading.tsx Stylesheet
 */
 
-.vocab-card-card.MuiCard-root {
-  height: 10em !important;
+/* VocabCard */
+
+.vocab-card-card.MuiCard-root,
+.vocab-card-card.card-button.MuiCard-root {
+  /* height: 10em !important; */
   background-color: #fafafa !important;
+  border-top: 0.2em transparent solid;
+}
+
+.vocab-card-card.flipped.MuiCard-root {
+  border-top: 0.2em #9575cd solid;
 }
 
 .vocab-card-container {
   min-width: 10em;
   width: 50%;
   margin: auto;
-}
-
-.vocab-card-heading {
   text-align: center;
 }
 
@@ -27,4 +32,14 @@
 
 .vocab-card-language-container {
   text-align: center;
+}
+
+.vocab-card-save-button {
+  margin-left: auto !important;
+}
+
+/* VocabCardButton */
+
+.vocab-card-card.card-button.MuiCard-root {
+  height: 100% !important;
 }

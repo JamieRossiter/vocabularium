@@ -6,7 +6,8 @@ import "../styles/containers/PackView.css";
 import PackViewInternals from "../subcontainers/PackViewInternals";
 
 type PackViewProps = {
-    packId: string
+    packId: string,
+    isEditable: boolean
 }
 
 const PackView = (props: PackViewProps) => {
@@ -37,7 +38,7 @@ const PackView = (props: PackViewProps) => {
             <div className="pack-view-container">
                 <HeaderBar />
                 <PackDetails packTitle={packData?.title} packDescription={packData?.description} packDateCreated={packData?.dateCreated} packFlagInfo={packData?.languageOptions} />
-                <PackViewInternals cardList={{cards: cardsData, language: packData?.languageOptions.languageLonghand}} progressBar={{totalValue: cardsData?.length}}  />
+                <PackViewInternals cardList={{cards: cardsData, language: packData?.languageOptions.languageLonghand}} progressBar={{totalValue: cardsData?.length}} isEditable={props.isEditable} />
             </div>
         </>
     )

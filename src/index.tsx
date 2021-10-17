@@ -26,7 +26,7 @@ import SectionHeading from "./components/SectionHeading";
 
 ReactDOM.render(
   <React.StrictMode>
-    <PackView packId={"2349857fhdsj"} />
+    <PackView packId={"2349857fhdsj"} isEditable={true} />
   </React.StrictMode>,
   document.getElementById('root')
 );

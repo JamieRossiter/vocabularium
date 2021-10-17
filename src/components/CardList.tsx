@@ -12,8 +12,14 @@ type CardListProps = {
     cards?: Array<Card>,
     language?: string,
     progress: Function,
-    forceFlipToBack: boolean,
-    swapSides: boolean
+    flipOptions: {
+        forceFlipToBack: boolean,
+        swapSides: boolean
+    },
+    editOptions: {
+        isEditable: boolean,
+        isEditState: Function
+    }
 }
 
 const CardList = (props: CardListProps) => {
@@ -21,7 +27,7 @@ const CardList = (props: CardListProps) => {
     const [flipCount, updateFlipCount] = React.useState<number>(0);
 
     React.useEffect(() => {
-        if(props.forceFlipToBack){
+        if(props.flipOptions.forceFlipToBack){
             updateFlipCount(0);
         }
     })
@@ -44,13 +50,15 @@ const CardList = (props: CardListProps) => {
 
         if(cardData){
             generatedCards = cardData.map(data => {
-                return <FlipMove><ListItem key={data.translated}><div className="card-list-card-container"><VocabCard vocab={data} language={props.language ?? "UNKNOWN"} flipped={handleFlipCountUpdated} forceFlipToBack={props.forceFlipToBack} swapSides={props.swapSides} /></div></ListItem></FlipMove>;
+                return <FlipMove><ListItem key={data.translated}><div className="card-list-card-container"><VocabCard vocab={data} language={props.language ?? "UNKNOWN"} flipOptions={{flipped: handleFlipCountUpdated, forceFlipToBack: props.flipOptions.forceFlipToBack, swapSides: props.flipOptions.swapSides}} editOptions={{isEditable: props.editOptions.isEditable, isEditState: props.editOptions.isEditState}} /></div></ListItem></FlipMove>;
             });
         } else {
             for(let i = 0; i < 10; i++){
                 generatedCards.push(<FadeIn><ListItem><div className="card-list-card-container"><VocabCardLoading /></div></ListItem></FadeIn>);
             }
         }
+
+        if(props.editOptions.isEditable) generatedCards.push(<FadeIn><ListItem><div className="card-list-card-container"><VocabCardButton /></div></ListItem></FadeIn>);
 
         return generatedCards;
 

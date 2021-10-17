@@ -1,12 +1,12 @@
 import { Card, CardActionArea, CardContent } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import "../styles/components/VocabCardButton.css";
+import "../styles/components/VocabCard.css";
 
 const VocabCardButton = () => {
     return(
         <>
-            <div className="vocab-card-button-container">
-                <Card>
+            <div className="vocab-card-container card-button">
+                <Card className="vocab-card-card card-button">
                     <CardActionArea>
                         <CardContent>
                             <AddIcon fontSize="large" color="disabled" />
