@@ -51,7 +51,7 @@ const VocabCard = (props: VocabCardProps) => {
     }
 
     function saveEditedVocab(originalWord: string, editedWord: string): void {
-        const matchingWordArray = editedVocab.filter(matchingWord => {
+        const matchingWordArray: EditedVocab[] = editedVocab.filter(matchingWord => {
             return matchingWord.originalWord != originalWord;
         }) // Remove an existing version of the edited word from the editedVocab array
         const evObject: EditedVocab = { originalWord: originalWord, editedWord: editedWord };

@@ -5,3 +5,8 @@
 .word-creation-list-item-grey {
   background-color: lightgrey;
 }
+
+.word-creation-list-no-words {
+  text-align: center;
+  color: grey;
+}

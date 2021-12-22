@@ -13,8 +13,17 @@
   margin-bottom: 1em;
 }
 
+.word-search-bar-search-functionality {
+  display: flex;
+  flex-direction: row;
+}
+
 .word-search-bar-input {
   width: 100%;
+}
+
+.word-search-bar-add-button .MuiButton-root {
+  height: 4em;
 }
 
 .word-search-bar-label {

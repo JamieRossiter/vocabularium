@@ -2,8 +2,7 @@ import { Button } from "@material-ui/core";
 import HeaderBar from "../components/HeaderBar";
 import SectionHeading from "../components/SectionHeading";
 import CreatePackDetails from "../components/CreatePackDetails";
-import WordSearchBar from "../components/WordSearchBar";
-import WordCreationList from "../components/WordCreationList";
+import PackCreateWordCreation from "../subcontainers/PackCreateWordCreation";
 import "../styles/containers/PackCreate.css";
 
 const PackCreate = () => {
@@ -14,8 +13,7 @@ const PackCreate = () => {
                 <SectionHeading headingContent="Create Vocab Pack" />
                 <CreatePackDetails />
                 <div className="pack-create-word-functions-container">
-                    <WordSearchBar />
-                    <WordCreationList />
+                    <PackCreateWordCreation />
                 </div>
                 <div className="pack-create-button">
                     <Button variant="contained" size="large">Create Pack</Button>
