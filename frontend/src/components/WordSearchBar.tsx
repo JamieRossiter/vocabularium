@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField, Button } from "@material-ui/core";
+import { TextField, Button, Dialog, DialogTitle, DialogContent, DialogContentText } from "@material-ui/core";
 import { Autocomplete, createFilterOptions } from "@material-ui/lab";
 import SearchLabel from "../subcomponents/SearchLabel";
 import "../styles/components/WordSearchBar.css";
@@ -19,6 +19,7 @@ const WordSearchBar = (props: WordSearchBarProps) => {
     const [englishWords, populateEnglishWords] = React.useState<Array<string>>([]);
     const [autocompleteOpen, setAutocompleteOpen] = React.useState<boolean>(false);
     const [autocompleteValue, updateAutocompleteValue] = React.useState<string>("");
+    const [dialogStatus, updateDialogStatus] = React.useState<boolean>(false);
 
     // Fetch a list of English words from a text file
     React.useEffect(() => {
@@ -48,8 +49,18 @@ const WordSearchBar = (props: WordSearchBarProps) => {
                 <h2>Selected Vocab</h2>
             </div>
             <div className="word-search-bar-more-info-button">
-                <Button variant="outlined" size="small">What is this?</Button>
+                <Button onClick={() => { updateDialogStatus(true) }} variant="outlined" size="small">What is this?</Button>
             </div>
+            <Dialog open={dialogStatus} onClose={() => { updateDialogStatus(false) }} >
+                <DialogTitle>
+                    Adding Vocab
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Type in and add any English vocabulary that you wish to be converted into your selected language.
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
             <div className="word-search-bar-search-functionality">
                 <div className="word-search-bar-input" >
                     <Autocomplete open={autocompleteOpen} filterOptions={autoCompleteFilterOptions} onInputChange={(e, value) => handleAutocompleteInputChange(value)} onChange={(e, value) => {handleNewWord(value)}} freeSolo options={englishWords} renderInput={params => <TextField variant="outlined" {...params} label={ <SearchLabel /> } />} />

@@ -15,7 +15,7 @@ const PackDetails = (props: PackDetailsProps) => {
     return(
         <>
             <div className="pack-details-component pack-details-exit-button" >
-                <ButtonIcon icon="close" />
+                <ButtonIcon onClick={() => { console.log("Close.") }} icon="close" />
             </div>
             <div className="pack-details-component pack-details-pack-info" >
                 <PackInfo title={props.packTitle} dateCreated={props.packDateCreated} />

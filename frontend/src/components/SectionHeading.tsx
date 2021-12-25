@@ -9,7 +9,7 @@ const SectionHeading = (props: SectionHeadingProps) => {
     return(
         <>
             <div className="section-heading-component section-heading-close-button">
-                <ButtonIcon icon="close" />
+                <ButtonIcon onClick={() => { console.log("Close") }} icon="close" />
             </div>
             <div className="section-heading-component section-heading-heading">
                 <h2>{props.headingContent}</h2>

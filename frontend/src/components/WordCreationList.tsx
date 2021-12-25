@@ -3,8 +3,30 @@ import { List, ListItem, ListItemSecondaryAction, ListItemText, Button } from "@
 import ButtonIcon from "../subcomponents/ButtonIcon";
 import "../styles/components/WordCreationList.css";
 
+type ListWordProps = {
+    word: string,
+    index: number,
+    beginDelete: Function
+}
+
 type WordCreationListProps = {
     wordList: Array<string>
+    handleDelete: Function
+}
+
+const ListWord = (props: ListWordProps) => {
+    return (
+        <>
+            <ListItem key={props.index}>
+                <ListItemSecondaryAction>
+                    <ButtonIcon onClick={props.beginDelete} icon="delete" />
+                </ListItemSecondaryAction>
+                <ListItemText>
+                    {props.word}
+                </ListItemText>
+            </ListItem>    
+        </>
+    )
 }
 
 const WordCreationList = (props: WordCreationListProps) => {
@@ -16,29 +38,13 @@ const WordCreationList = (props: WordCreationListProps) => {
             if(index % 2 === 0){
                 finalList.push(
                     <div className="word-creation-list-item-white">
-                        <ListItem key={index}>
-                            <ListItemSecondaryAction>
-                                <Button variant="text">Edit</Button>
-                                <ButtonIcon icon="delete" />
-                            </ListItemSecondaryAction>
-                            <ListItemText>
-                                {word}
-                            </ListItemText>
-                        </ListItem>
+                        <ListWord word={word} index={index} beginDelete={() => {props.handleDelete(word)}} />
                     </div>
                 )
             } else {
                 finalList.push(
                     <div className="word-creation-list-item-grey">
-                        <ListItem key={index}>
-                            <ListItemSecondaryAction>
-                                <Button variant="text">Edit</Button>
-                                <ButtonIcon icon="delete" />
-                            </ListItemSecondaryAction>
-                            <ListItemText>
-                                {word}
-                            </ListItemText>
-                        </ListItem>
+                        <ListWord word={word} index={index} beginDelete={() => {props.handleDelete(word)}} />
                     </div>
                 )
             }

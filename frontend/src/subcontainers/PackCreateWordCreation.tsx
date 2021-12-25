@@ -10,10 +10,15 @@ const PackCreateWordCreation = () => {
         if(word) updateWordList([...wordList, word]);
     }
 
+    function deleteWord(word: string): void {
+        let newWordList = wordList.filter(w => w != word);
+        updateWordList(newWordList);
+    }
+
     return(
         <>
             <WordSearchBar addNewWord={addWordToList} />
-            <WordCreationList wordList={wordList} />
+            <WordCreationList handleDelete={deleteWord} wordList={wordList} />
         </>
     )
 
