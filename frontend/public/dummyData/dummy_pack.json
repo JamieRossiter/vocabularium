@@ -1,5 +1,5 @@
 {
-    "id": "23jkh4g89d",
+    "id": "18736",
     "title": "Household Appliances",
     "dateCreated": "Oct 14 9:03AM",
     "description": "Appliances found throughout the house",
@@ -7,6 +7,5 @@
         "languageLonghand": "Dutch",
         "languageShorthand": "DUT",
         "countryCode": "NL" 
-    },
-    "cards": "dummy_cards.json"
+    }
 }
