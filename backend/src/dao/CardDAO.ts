@@ -1,5 +1,4 @@
 import DAO from "./DAO";
-import Mongo from "mongodb";
 
 type Cards = {
     success: boolean,
@@ -45,3 +44,5 @@ class CardDAO extends DAO {
     }
 
 }
+
+export default CardDAO;

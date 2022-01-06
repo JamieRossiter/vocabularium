@@ -1,4 +1,3 @@
-import Mongo from "mongodb";
 import DAO from "./DAO";
 
 type Pack = {
@@ -32,7 +31,7 @@ class PackDAO extends DAO {
             if(!result) {
                 packData = { success: false, id: packId, title: "", dateCreated: "", description: "", languageOptions: { languageLonghand: "", languageShorthand: "", countryCode: "" }}
             } else {
-                packData = { success: true, id: result.id, title: result.title, dateCreated: result.dateCreated, description: result.description, languageOptions: { languageLonghand: result.languageLonghand, languageShorthand: result.languageShorthand, countryCode: result.countryCode } }
+                packData = { success: true, id: result.id, title: result.title, dateCreated: result.dateCreated, description: result.description, languageOptions: { languageLonghand: result.languageOptions.languageLonghand, languageShorthand: result.languageOptions.languageShorthand, countryCode: result.languageOptions.countryCode } }
             }
             this._client.close();
             return packData;
@@ -46,6 +45,6 @@ class PackDAO extends DAO {
         })
     }
 
-    
-
 }
+
+export default PackDAO;

@@ -19,14 +19,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Routes_1 = __importDefault(require("./Routes"));
+// Replace this with a service or controller layer (can't remember which one)
+var CardDAO_1 = __importDefault(require("../dao/CardDAO"));
 var CardRoutes = /** @class */ (function (_super) {
     __extends(CardRoutes, _super);
     function CardRoutes(app) {
-        return _super.call(this, app, "/cards") || this;
+        var _this = _super.call(this, app, "/cards") || this;
+        _this._dao = new CardDAO_1.default(); // This needs to be replaced with a service layer or controller layer
+        return _this;
     }
     CardRoutes.prototype.initializeGetRoutes = function () {
+        var _this = this;
         this._server.get(this._url, function (req, response) {
-            console.log("Successful Get!");
+            _this._dao.getCards("18736").then(function (cards) {
+                console.log(cards); // This currently returns successfully. Pass req.query through to a service or controller layer and let them handle all the necessary checks.
+            });
         });
     };
     CardRoutes.prototype.initializePostRoutes = function () {

@@ -19,14 +19,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Routes_1 = __importDefault(require("./Routes"));
+var PackDAO_1 = __importDefault(require("../dao/PackDAO"));
 var PackRoutes = /** @class */ (function (_super) {
     __extends(PackRoutes, _super);
     function PackRoutes(app) {
-        return _super.call(this, app, "/packs") || this;
+        var _this = _super.call(this, app, "/packs") || this;
+        _this._dao = new PackDAO_1.default();
+        return _this;
     }
     PackRoutes.prototype.initializeGetRoutes = function () {
+        var _this = this;
         this._server.get(this._url, function (req, response) {
-            console.log("Successful Get!");
+            _this._dao.getPack("18736").then(function (pack) {
+                console.log(pack); // This also returns successfully. Pass req.query through to a service or controller layer and let them handle all the necessary checks.
+            });
         });
     };
     PackRoutes.prototype.initializePostRoutes = function () {
