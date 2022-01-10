@@ -63,7 +63,7 @@ var PackDAO = /** @class */ (function (_super) {
         return _this;
     }
     // TODO: Test!
-    PackDAO.prototype.getPack = function (packId) {
+    PackDAO.prototype.getPackById = function (packId) {
         return __awaiter(this, void 0, void 0, function () {
             var query;
             var _this = this;

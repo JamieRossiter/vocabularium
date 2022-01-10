@@ -1,19 +1,4 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -50,44 +35,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var Controller_1 = __importDefault(require("./Controller"));
-var PackDAO_1 = __importDefault(require("../dao/PackDAO"));
-var RequestActions_1 = __importDefault(require("../utils/RequestActions"));
-var PackController = /** @class */ (function (_super) {
-    __extends(PackController, _super);
-    function PackController() {
-        var _this = _super.call(this) || this;
-        _this._dao = new PackDAO_1.default();
-        return _this;
+var Controller = /** @class */ (function () {
+    function Controller() {
     }
-    PackController.prototype.getPack = function (req) {
+    Controller.prototype.requestContainsId = function (req) {
+        var keys = Object.keys(req);
+        if (!keys.includes("id"))
+            return false;
+        return true;
+    };
+    Controller.prototype.handleInvalidRequestId = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var response;
-            var _this = this;
             return __generator(this, function (_a) {
-                if (!this.requestContainsId(req)) {
-                    response = this.handleInvalidRequestId();
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, { responseCode: 400, message: "Request contains invalid ID.", data: null }];
+                    case 1: return [2 /*return*/, _a.sent()];
                 }
-                else {
-                    response = this._dao.getPackById(req.id).then(function (data) {
-                        return _this.handleDAOResponse(data, RequestActions_1.default.GET);
-                    });
-                }
-                return [2 /*return*/, response];
             });
         });
     };
-    PackController.prototype.handleDAOResponse = function (responseData, action) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, { responseCode: 200, message: "Pack " + action + " successful", data: responseData }];
-            });
-        });
-    };
-    return PackController;
-}(Controller_1.default));
-exports.default = PackController;
+    return Controller;
+}());
+exports.default = Controller;

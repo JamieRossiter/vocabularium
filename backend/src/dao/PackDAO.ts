@@ -1,17 +1,5 @@
 import DAO from "./DAO";
-
-type Pack = {
-    success: boolean,
-    id: string,
-    title: string,
-    dateCreated: string,
-    description: string,
-    languageOptions: {
-        languageLonghand: string,
-        languageShorthand: string,
-        countryCode: string 
-    }
-}
+import Pack from "../utils/Pack";
 
 class PackDAO extends DAO {
 
@@ -23,7 +11,7 @@ class PackDAO extends DAO {
     }
 
     // TODO: Test!
-    async getPack(packId: string): Promise<Pack> {
+    public async getPackById(packId: string): Promise<Pack> {
         const query: { id: string } = { id: packId };
         return await this.accessDb(this._collectionName, this._client).findOne(query) // Keep in mind that the connection is not awaited on the parent method. This could cause an issue.
         .then(result => {

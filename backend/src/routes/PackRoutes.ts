@@ -1,20 +1,20 @@
 import Routes from "./Routes";
 import Express from "express";
-import PackDAO from "../dao/PackDAO";
+import PackController from "../controllers/PackController";
 
 class PackRoutes extends Routes {
 
-    private _dao: PackDAO; 
+    private _controller: PackController; 
 
     constructor(app: Express.Application){
         super(app, "/packs");
-        this._dao = new PackDAO();
+        this._controller = new PackController();
     }
 
     override initializeGetRoutes(): void {
         this._server.get(this._url, (req: Express.Request, response: Express.Response) => {
-            this._dao.getPack("18736").then(pack => {
-                console.log(pack); // This also returns successfully. Pass req.query through to a service or controller layer and let them handle all the necessary checks.
+            this._controller.getPack(req.query).then(pack => {
+                console.log(pack);
             })
         })
     }
