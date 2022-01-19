@@ -1,29 +1,30 @@
 import Routes from "./Routes";
 import Express from "express";
-
-// Replace this with a service or controller layer (can't remember which one)
-import CardDAO from "../dao/CardDAO";
+import CardController from "../controllers/CardController"
+import { Cards } from "../utils/Cards";
 
 class CardRoutes extends Routes {
 
-    private _dao: CardDAO;
+    private _controller: CardController;
 
     constructor(app: Express.Application){
         super(app, "/cards");
-        this._dao = new CardDAO(); // This needs to be replaced with a service layer or controller layer
+        this._controller = new CardController();
     }
 
     override initializeGetRoutes(): void {
-        this._server.get(this._url, (req: Express.Request, response: Express.Response) => {
-            this._dao.getCards("18736").then(cards => {
-                console.log(cards); // This currently returns successfully. Pass req.query through to a service or controller layer and let them handle all the necessary checks.
+        this._server.get(this._url, (req: Express.Request, res: Express.Response) => {
+            this._controller.getCards(req.query).then(cards => {
+                res.status(cards.responseCode).send(cards);
             })
         })
     }
     
     override initializePostRoutes(): void {
-        this._server.post(this._url, (req: Express.Request, response: Express.Response) => {
-            console.log("Successful Post!");
+        this._server.post(this._url, (req: Express.Request, res: Express.Response) => {
+            this._controller.createCards(req.body).then(postRes => {
+                res.status(postRes.responseCode).send(postRes);
+            })
         })
     }
 

@@ -70,18 +70,82 @@ var PackController = /** @class */ (function (_super) {
             var _this = this;
             return __generator(this, function (_a) {
                 if (!this.requestContainsId(req)) {
-                    response = this.handleInvalidRequestId();
+                    response = this.handleNonexistentRequestId();
                 }
                 else {
-                    response = this._dao.getPackById(req.id).then(function (data) {
-                        return _this.handleDAOResponse(data, RequestActions_1.default.GET);
-                    });
+                    if (!this.requestHasValidId(req)) {
+                        response = this.handleInvalidRequestId();
+                    }
+                    else {
+                        response = this._dao.getPackById(req.id).then(function (data) {
+                            return _this.handlePackDAOResponse(data, RequestActions_1.default.GET);
+                        });
+                    }
                 }
                 return [2 /*return*/, response];
             });
         });
     };
-    PackController.prototype.handleDAOResponse = function (responseData, action) {
+    PackController.prototype.createPack = function (req) {
+        var response;
+        if (!this.requestContainsId(req)) {
+            response = this.handleNonexistentRequestId();
+        }
+        else {
+            if (this.requestHasValidId(req)) {
+                response = this.handleInvalidRequestId();
+            }
+            else {
+                var validityObject = this.isPackDataValid(req);
+                if (!validityObject.valid) {
+                    response = this.handleInvalidRequestParamsOrBody(validityObject.message);
+                }
+                else {
+                    if (this._dao.createNewPack(req)) {
+                        response = this.handlePackDAOResponse(null, RequestActions_1.default.POST);
+                    }
+                    else {
+                        response = this.handlePostDatabaseIssue();
+                    }
+                }
+            }
+        }
+        return response;
+    };
+    PackController.prototype.isPackDataValid = function (data) {
+        var isValid = true;
+        var message = [];
+        if (!("title" in data)) {
+            isValid = false;
+            message.push("Request has no title");
+        }
+        if (!("dateCreated" in data)) {
+            isValid = false;
+            message.push("Request has no creation date");
+        }
+        if (!("description" in data)) {
+            isValid = false;
+            message.push("Request has no description");
+        }
+        if (!("languageOptions" in data)) {
+            isValid = false;
+            message.push("Request has no language options");
+        }
+        if (!("languageLonghand" in data.languageOptions)) {
+            isValid = false;
+            message.push("Request has no language longhand code");
+        }
+        if (!("languageShorthand" in data.languageOptions)) {
+            isValid = false;
+            message.push("Request has no language shorthand code");
+        }
+        if (!("countryCode" in data.languageOptions)) {
+            isValid = false;
+            message.push("Request has no language country code");
+        }
+        return { valid: isValid, message: message };
+    };
+    PackController.prototype.handlePackDAOResponse = function (responseData, action) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, { responseCode: 200, message: "Pack " + action + " successful", data: responseData }];

@@ -62,8 +62,7 @@ var CardDAO = /** @class */ (function (_super) {
         _this._collectionName = "cards";
         return _this;
     }
-    // TODO: Test!
-    CardDAO.prototype.getCards = function (packId) {
+    CardDAO.prototype.getCardsByPackId = function (packId) {
         return __awaiter(this, void 0, void 0, function () {
             var query;
             var _this = this;
@@ -75,10 +74,10 @@ var CardDAO = /** @class */ (function (_super) {
                                 .then(function (result) {
                                 var cardsData;
                                 if (!result) {
-                                    cardsData = { success: false, packId: packId, cards: new Array() };
+                                    cardsData = _this.generateEmptyCards();
                                 }
                                 else {
-                                    cardsData = { success: true, packId: packId, cards: result.cards };
+                                    cardsData = _this.generateDataRichCards(result.cards, packId);
                                 }
                                 _this._client.close();
                                 return cardsData;
@@ -87,13 +86,32 @@ var CardDAO = /** @class */ (function (_super) {
                                 var errorData;
                                 console.error(error);
                                 _this._client.close();
-                                errorData = { success: false, packId: packId, cards: new Array() };
+                                errorData = _this.generateEmptyCards();
                                 return errorData;
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
+    };
+    CardDAO.prototype.createNewCards = function (cardsData) {
+        var query = cardsData;
+        var successful;
+        try {
+            this.accessDb(this._collectionName, this._client).insertOne(query);
+            successful = true;
+        }
+        catch (error) {
+            console.error(error);
+            successful = false;
+        }
+        return successful;
+    };
+    CardDAO.prototype.generateDataRichCards = function (data, id) {
+        return { packId: id, cards: data };
+    };
+    CardDAO.prototype.generateEmptyCards = function () {
+        return { packId: null, cards: null };
     };
     return CardDAO;
 }(DAO_1.default));

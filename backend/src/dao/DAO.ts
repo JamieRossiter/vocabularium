@@ -16,7 +16,6 @@ class DAO {
         client.connect();
         const db: Db = this._client.db(this._dbName);
         const collection: Collection = db.collection(collectionName);
-        console.log("Collection", collection);
         return collection;
     }
 }

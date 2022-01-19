@@ -39,19 +39,63 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Controller = /** @class */ (function () {
     function Controller() {
     }
+    Controller.prototype.idIsValid = function (id) {
+        var isValid = true;
+        if (isNaN(parseInt(id))) {
+            isValid = false;
+        }
+        if (!(id.length > 0 && id.length < 6)) {
+            isValid = false;
+        }
+        return isValid;
+    };
     Controller.prototype.requestContainsId = function (req) {
-        var keys = Object.keys(req);
-        if (!keys.includes("id"))
-            return false;
-        return true;
+        return "packId" in req;
+    };
+    Controller.prototype.requestHasValidId = function (req) {
+        var isValid = true;
+        if (!this.requestContainsId(req)) {
+            isValid = false;
+        }
+        if (!this.idIsValid(req.packId)) {
+            isValid = false;
+        }
+        return isValid;
+    };
+    Controller.prototype.handleNonexistentRequestId = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, { responseCode: 400, message: "Request does not contain id", data: null }];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
     };
     Controller.prototype.handleInvalidRequestId = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, { responseCode: 400, message: "Request contains invalid ID.", data: null }];
+                    case 0: return [4 /*yield*/, { responseCode: 400, message: "Request contains invalid Id", data: null }];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
+            });
+        });
+    };
+    Controller.prototype.handlePostDatabaseIssue = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, { responseCode: 500, message: "POST request was unsuccessful due to a database issue", data: null }];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    Controller.prototype.handleInvalidRequestParamsOrBody = function (message) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, { responseCode: 400, message: message, data: null }];
             });
         });
     };

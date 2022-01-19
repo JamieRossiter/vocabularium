@@ -23,21 +23,24 @@ var PackController_1 = __importDefault(require("../controllers/PackController"))
 var PackRoutes = /** @class */ (function (_super) {
     __extends(PackRoutes, _super);
     function PackRoutes(app) {
-        var _this = _super.call(this, app, "/packs") || this;
+        var _this = _super.call(this, app, "/pack") || this;
         _this._controller = new PackController_1.default();
         return _this;
     }
     PackRoutes.prototype.initializeGetRoutes = function () {
         var _this = this;
-        this._server.get(this._url, function (req, response) {
+        this._server.get(this._url, function (req, res) {
             _this._controller.getPack(req.query).then(function (pack) {
-                console.log(pack);
+                res.status(pack.responseCode).send(pack);
             });
         });
     };
     PackRoutes.prototype.initializePostRoutes = function () {
-        this._server.post(this._url, function (req, response) {
-            console.log("Successful Post!");
+        var _this = this;
+        this._server.post(this._url, function (req, res) {
+            _this._controller.createPack(req.body).then(function (postRes) {
+                res.status(postRes.responseCode).send(postRes);
+            });
         });
     };
     PackRoutes.prototype.initializePutRoutes = function () {

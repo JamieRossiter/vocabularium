@@ -8,6 +8,12 @@ class ServerConfiguration {
     constructor(){
         this._app = Express();
         this._port = 5000;
+        this.configure();
+    }
+
+    private configure(): void {
+        this.app.use(Express.json());
+        this.app.use(Express.urlencoded({ extended: false }));
     }
 
     get app(): Express.Application {

@@ -8,7 +8,12 @@ var ServerConfiguration = /** @class */ (function () {
     function ServerConfiguration() {
         this._app = (0, express_1.default)();
         this._port = 5000;
+        this.configure();
     }
+    ServerConfiguration.prototype.configure = function () {
+        this.app.use(express_1.default.json());
+        this.app.use(express_1.default.urlencoded({ extended: false }));
+    };
     Object.defineProperty(ServerConfiguration.prototype, "app", {
         get: function () {
             return this._app;

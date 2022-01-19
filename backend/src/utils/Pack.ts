@@ -1,6 +1,5 @@
 type Pack = {
-    success: boolean,
-    id: string,
+    packId: string,
     title: string,
     dateCreated: string,
     description: string,

@@ -62,7 +62,6 @@ var PackDAO = /** @class */ (function (_super) {
         _this._collectionName = "packs";
         return _this;
     }
-    // TODO: Test!
     PackDAO.prototype.getPackById = function (packId) {
         return __awaiter(this, void 0, void 0, function () {
             var query;
@@ -75,10 +74,10 @@ var PackDAO = /** @class */ (function (_super) {
                                 .then(function (result) {
                                 var packData;
                                 if (!result) {
-                                    packData = { success: false, id: packId, title: "", dateCreated: "", description: "", languageOptions: { languageLonghand: "", languageShorthand: "", countryCode: "" } };
+                                    packData = _this.generateEmptyPack(packId);
                                 }
                                 else {
-                                    packData = { success: true, id: result.id, title: result.title, dateCreated: result.dateCreated, description: result.description, languageOptions: { languageLonghand: result.languageOptions.languageLonghand, languageShorthand: result.languageOptions.languageShorthand, countryCode: result.languageOptions.countryCode } };
+                                    packData = _this.generateDataRichPack(result);
                                 }
                                 _this._client.close();
                                 return packData;
@@ -87,13 +86,32 @@ var PackDAO = /** @class */ (function (_super) {
                                 var errorData;
                                 console.error(error);
                                 _this._client.close();
-                                errorData = { success: false, id: packId, title: "", dateCreated: "", description: "", languageOptions: { languageLonghand: "", languageShorthand: "", countryCode: "" } };
+                                errorData = _this.generateEmptyPack(packId);
                                 return errorData;
                             })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
+    };
+    PackDAO.prototype.createNewPack = function (packData) {
+        var query = packData;
+        var successful;
+        try {
+            this.accessDb(this._collectionName, this._client).insertOne(query);
+            successful = true;
+        }
+        catch (error) {
+            console.error(error);
+            successful = false;
+        }
+        return successful;
+    };
+    PackDAO.prototype.generateEmptyPack = function (packId) {
+        return { packId: packId, title: "", dateCreated: "", description: "", languageOptions: { languageLonghand: "", languageShorthand: "", countryCode: "" } };
+    };
+    PackDAO.prototype.generateDataRichPack = function (data) {
+        return { packId: data.id, title: data.title, dateCreated: data.dateCreated, description: data.description, languageOptions: { languageLonghand: data.languageOptions.languageLonghand, languageShorthand: data.languageOptions.languageShorthand, countryCode: data.languageOptions.countryCode } };
     };
     return PackDAO;
 }(DAO_1.default));

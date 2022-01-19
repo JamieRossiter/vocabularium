@@ -11,7 +11,6 @@ var DAO = /** @class */ (function () {
         client.connect();
         var db = this._client.db(this._dbName);
         var collection = db.collection(collectionName);
-        console.log("Collection", collection);
         return collection;
     };
     return DAO;

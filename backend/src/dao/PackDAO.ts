@@ -10,16 +10,15 @@ class PackDAO extends DAO {
         this._collectionName = "packs"
     }
 
-    // TODO: Test!
     public async getPackById(packId: string): Promise<Pack> {
         const query: { id: string } = { id: packId };
         return await this.accessDb(this._collectionName, this._client).findOne(query) // Keep in mind that the connection is not awaited on the parent method. This could cause an issue.
         .then(result => {
             let packData: Pack;
             if(!result) {
-                packData = { success: false, id: packId, title: "", dateCreated: "", description: "", languageOptions: { languageLonghand: "", languageShorthand: "", countryCode: "" }}
+                packData = this.generateEmptyPack(packId);
             } else {
-                packData = { success: true, id: result.id, title: result.title, dateCreated: result.dateCreated, description: result.description, languageOptions: { languageLonghand: result.languageOptions.languageLonghand, languageShorthand: result.languageOptions.languageShorthand, countryCode: result.languageOptions.countryCode } }
+                packData = this.generateDataRichPack(result);
             }
             this._client.close();
             return packData;
@@ -28,9 +27,30 @@ class PackDAO extends DAO {
             let errorData: Pack;
             console.error(error);
             this._client.close();
-            errorData = { success: false, id: packId, title: "", dateCreated: "", description: "", languageOptions: { languageLonghand: "", languageShorthand: "", countryCode: "" }}
+            errorData = this.generateEmptyPack(packId)
             return errorData;
         })
+    }
+
+    public createNewPack(packData: Pack): boolean {
+        const query: Pack = packData;
+        let successful: boolean
+        try {
+            this.accessDb(this._collectionName, this._client).insertOne(query);
+            successful = true;
+        } catch (error){
+            console.error(error);
+            successful = false;
+        }
+        return successful
+    }
+
+    private generateEmptyPack(packId: string): Pack {
+        return { packId: packId, title: "", dateCreated: "", description: "", languageOptions: { languageLonghand: "", languageShorthand: "", countryCode: "" }}
+    }
+
+    private generateDataRichPack(data: any): Pack {
+        return { packId: data.id, title: data.title, dateCreated: data.dateCreated, description: data.description, languageOptions: { languageLonghand: data.languageOptions.languageLonghand, languageShorthand: data.languageOptions.languageShorthand, countryCode: data.languageOptions.countryCode } }
     }
 
 }

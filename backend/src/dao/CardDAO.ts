@@ -1,15 +1,5 @@
 import DAO from "./DAO";
-
-type Cards = {
-    success: boolean,
-    packId: string,
-    cards: Array<Card>
-}
-
-type Card = {
-    translated: string,
-    untranslated: string
-}
+import { Cards, Card } from "../utils/Cards";
 
 class CardDAO extends DAO {
 
@@ -20,16 +10,15 @@ class CardDAO extends DAO {
         this._collectionName = "cards"
     }
 
-    // TODO: Test!
-    async getCards(packId: string): Promise<Cards> {
+    public async getCardsByPackId(packId: string): Promise<Cards> {
         const query: { packId: string } = { packId: packId }
         return await this.accessDb(this._collectionName, this._client).findOne(query) // Keep in mind that the connection is not awaited on the parent method. This could cause an issue.
         .then(result => {
             let cardsData: Cards
             if(!result){
-                cardsData = { success: false, packId: packId, cards: new Array<Card>() };
+                cardsData = this.generateEmptyCards();
             } else {
-                cardsData = { success: true, packId: packId, cards: result.cards};
+                cardsData = this.generateDataRichCards(result.cards, packId);
             }
             this._client.close()
             return cardsData;
@@ -38,9 +27,30 @@ class CardDAO extends DAO {
             let errorData: Cards;
             console.error(error);
             this._client.close();
-            errorData = { success: false, packId: packId, cards: new Array<Card>() };
+            errorData = this.generateEmptyCards();
             return errorData;
         })
+    }
+
+    public createNewCards(cardsData: Cards) : boolean {
+        const query: Cards = cardsData;
+        let successful: boolean;
+        try {
+            this.accessDb(this._collectionName, this._client).insertOne(query);
+            successful = true;
+        } catch (error) {
+            console.error(error);
+            successful = false;
+        }
+        return successful;
+    }
+
+    private generateDataRichCards(data: Array<Card>, id: string): Cards {
+        return { packId: id, cards: data }
+    }
+
+    private generateEmptyCards(): Cards {
+        return { packId: null, cards: null }
     }
 
 }

@@ -7,21 +7,23 @@ class PackRoutes extends Routes {
     private _controller: PackController; 
 
     constructor(app: Express.Application){
-        super(app, "/packs");
+        super(app, "/pack");
         this._controller = new PackController();
     }
 
     override initializeGetRoutes(): void {
-        this._server.get(this._url, (req: Express.Request, response: Express.Response) => {
+        this._server.get(this._url, (req: Express.Request, res: Express.Response) => {
             this._controller.getPack(req.query).then(pack => {
-                console.log(pack);
+                res.status(pack.responseCode).send(pack);
             })
         })
     }
     
     override initializePostRoutes(): void {
-        this._server.post(this._url, (req: Express.Request, response: Express.Response) => {
-            console.log("Successful Post!");
+        this._server.post(this._url, (req: Express.Request, res: Express.Response) => {
+            this._controller.createPack(req.body).then(postRes => {
+                res.status(postRes.responseCode).send(postRes);
+            })
         })
     }
 
