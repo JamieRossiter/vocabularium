@@ -105,7 +105,7 @@ var CardController = /** @class */ (function (_super) {
                         response = this.handleCardDAOResponse(null, RequestActions_1.default.POST);
                     }
                     else {
-                        response = this.handlePostDatabaseIssue();
+                        response = this.handleDatabaseIssue(RequestActions_1.default.POST);
                     }
                 }
             }

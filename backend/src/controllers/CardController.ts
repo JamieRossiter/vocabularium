@@ -45,7 +45,7 @@ class CardController extends Controller {
                     if(this._dao.createNewCards(req)){
                         response = this.handleCardDAOResponse(null, RequestActions.POST)
                     } else {
-                        response = this.handlePostDatabaseIssue();
+                        response = this.handleDatabaseIssue(RequestActions.POST);
                     }
                 }
                 

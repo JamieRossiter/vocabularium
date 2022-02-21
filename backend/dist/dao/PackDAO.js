@@ -69,7 +69,7 @@ var PackDAO = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        query = { id: packId };
+                        query = { packId: packId };
                         return [4 /*yield*/, this.accessDb(this._collectionName, this._client).findOne(query) // Keep in mind that the connection is not awaited on the parent method. This could cause an issue.
                                 .then(function (result) {
                                 var packData;
@@ -99,6 +99,22 @@ var PackDAO = /** @class */ (function (_super) {
         var successful;
         try {
             this.accessDb(this._collectionName, this._client).insertOne(query);
+            successful = true;
+        }
+        catch (error) {
+            console.error(error);
+            successful = false;
+        }
+        return successful;
+    };
+    PackDAO.prototype.editPackData = function (editData) {
+        var filter = { packId: parseInt(editData.packId) };
+        var updateQuery = {
+            $set: editData
+        };
+        var successful;
+        try {
+            this.accessDb(this._collectionName, this._client).updateOne(filter, updateQuery);
             successful = true;
         }
         catch (error) {

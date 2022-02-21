@@ -1,5 +1,5 @@
 type Pack = {
-    packId: string,
+    packId: number,
     title: string,
     dateCreated: string,
     description: string,

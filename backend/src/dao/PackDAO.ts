@@ -10,8 +10,8 @@ class PackDAO extends DAO {
         this._collectionName = "packs"
     }
 
-    public async getPackById(packId: string): Promise<Pack> {
-        const query: { id: string } = { id: packId };
+    public async getPackById(packId: number): Promise<Pack> {
+        const query: { packId: number } = { packId: packId };
         return await this.accessDb(this._collectionName, this._client).findOne(query) // Keep in mind that the connection is not awaited on the parent method. This could cause an issue.
         .then(result => {
             let packData: Pack;
@@ -38,14 +38,30 @@ class PackDAO extends DAO {
         try {
             this.accessDb(this._collectionName, this._client).insertOne(query);
             successful = true;
-        } catch (error){
+        } catch (error: any){
             console.error(error);
             successful = false;
         }
         return successful
     }
 
-    private generateEmptyPack(packId: string): Pack {
+    public editPackData(editData: any): boolean {
+        const filter: { packId: number } = { packId: parseInt(editData.packId)}
+        const updateQuery: { $set: any } = { 
+            $set: editData
+        }
+        let successful: boolean;
+        try {
+            this.accessDb(this._collectionName, this._client).updateOne(filter, updateQuery);
+            successful = true;
+        } catch (error: any){
+            console.error(error);
+            successful = false;
+        }
+        return successful;
+    }
+
+    private generateEmptyPack(packId: number): Pack {
         return { packId: packId, title: "", dateCreated: "", description: "", languageOptions: { languageLonghand: "", languageShorthand: "", countryCode: "" }}
     }
 

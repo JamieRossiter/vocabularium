@@ -77,7 +77,7 @@ var PackController = /** @class */ (function (_super) {
                         response = this.handleInvalidRequestId();
                     }
                     else {
-                        response = this._dao.getPackById(req.id).then(function (data) {
+                        response = this._dao.getPackById(parseInt(req.packId)).then(function (data) {
                             return _this.handlePackDAOResponse(data, RequestActions_1.default.GET);
                         });
                     }
@@ -92,7 +92,7 @@ var PackController = /** @class */ (function (_super) {
             response = this.handleNonexistentRequestId();
         }
         else {
-            if (this.requestHasValidId(req)) {
+            if (!this.requestHasValidId(req)) {
                 response = this.handleInvalidRequestId();
             }
             else {
@@ -105,12 +105,53 @@ var PackController = /** @class */ (function (_super) {
                         response = this.handlePackDAOResponse(null, RequestActions_1.default.POST);
                     }
                     else {
-                        response = this.handlePostDatabaseIssue();
+                        response = this.handleDatabaseIssue(RequestActions_1.default.POST);
                     }
                 }
             }
         }
         return response;
+    };
+    PackController.prototype.editPack = function (req) {
+        var response;
+        if (!this.requestContainsId(req)) {
+            response = this.handleNonexistentRequestId();
+        }
+        else {
+            if (!this.requestHasValidId(req)) {
+                response = this.handleInvalidRequestId();
+            }
+            else {
+                if (!this.isEditDataValid(req)) {
+                    response = this.handleInvalidRequestParamsOrBody(["Request contains invalid body parameter(s)"]);
+                }
+                else {
+                    if (this._dao.editPackData(req)) {
+                        response = this.handlePackDAOResponse(null, RequestActions_1.default.PUT);
+                    }
+                    else {
+                        response = this.handleDatabaseIssue(RequestActions_1.default.PUT);
+                    }
+                }
+            }
+        }
+        return response;
+    };
+    PackController.prototype.isEditDataValid = function (data) {
+        var isValid = true;
+        var validKeys = [
+            "packId",
+            "title",
+            "dateCreated",
+            "description",
+            "languageOptions"
+        ];
+        var editDataKeys = Object.keys(data);
+        editDataKeys.forEach(function (key) {
+            if (!validKeys.includes(key))
+                isValid = false;
+        });
+        return isValid;
     };
     PackController.prototype.isPackDataValid = function (data) {
         var isValid = true;

@@ -10,8 +10,8 @@ class CardDAO extends DAO {
         this._collectionName = "cards"
     }
 
-    public async getCardsByPackId(packId: string): Promise<Cards> {
-        const query: { packId: string } = { packId: packId }
+    public async getCardsByPackId(packId: number): Promise<Cards> {
+        const query: { packId: number } = { packId: packId }
         return await this.accessDb(this._collectionName, this._client).findOne(query) // Keep in mind that the connection is not awaited on the parent method. This could cause an issue.
         .then(result => {
             let cardsData: Cards
@@ -45,7 +45,7 @@ class CardDAO extends DAO {
         return successful;
     }
 
-    private generateDataRichCards(data: Array<Card>, id: string): Cards {
+    private generateDataRichCards(data: Array<Card>, id: number): Cards {
         return { packId: id, cards: data }
     }
 

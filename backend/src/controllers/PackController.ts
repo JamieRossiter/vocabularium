@@ -21,7 +21,7 @@ class PackController extends Controller {
             if(!this.requestHasValidId(req)){
                 response = this.handleInvalidRequestId();
             } else {
-                response = this._dao.getPackById(req.id).then(data => {
+                response = this._dao.getPackById(parseInt(req.packId)).then(data => {
                     return this.handlePackDAOResponse(data, RequestActions.GET);
                 })
             }
@@ -35,7 +35,7 @@ class PackController extends Controller {
         if(!this.requestContainsId(req)){
             response = this.handleNonexistentRequestId();
         } else {
-            if(this.requestHasValidId(req)){
+            if(!this.requestHasValidId(req)){
                 response = this.handleInvalidRequestId();
             } else {
 
@@ -46,13 +46,53 @@ class PackController extends Controller {
                     if(this._dao.createNewPack(req)){
                         response = this.handlePackDAOResponse(null, RequestActions.POST)
                     } else {
-                        response = this.handlePostDatabaseIssue();
+                        response = this.handleDatabaseIssue(RequestActions.POST);
                     }
                 }
                 
             }
         }
         return response;
+    }
+
+    public editPack(req: any): Promise<ServerResponse> {
+        let response: Promise<ServerResponse>
+
+        if(!this.requestContainsId(req)){
+            response = this.handleNonexistentRequestId();
+        } else {
+            if(!this.requestHasValidId(req)){
+                response = this.handleInvalidRequestId();
+            } else {
+                if(!this.isEditDataValid(req)){
+                    response = this.handleInvalidRequestParamsOrBody(["Request contains invalid body parameter(s)"])
+                } else {
+                    if(this._dao.editPackData(req)){
+                        response = this.handlePackDAOResponse(null, RequestActions.PUT);
+                    } else {
+                        response = this.handleDatabaseIssue(RequestActions.PUT);
+                    }
+                }
+            }
+        }
+        return response;
+    }
+
+    private isEditDataValid(data: any): boolean {
+        let isValid: boolean = true;
+        let validKeys: Array<string> = 
+        [
+            "packId",
+            "title", 
+            "dateCreated", 
+            "description",
+            "languageOptions"
+        ]
+        let editDataKeys: Array<string> = Object.keys(data);
+        editDataKeys.forEach(key => {
+            if(!validKeys.includes(key)) isValid = false;
+        })
+        return isValid;
     }
 
     private isPackDataValid(data: any): { valid: boolean, message: Array<string> } {

@@ -41,10 +41,10 @@ var Controller = /** @class */ (function () {
     }
     Controller.prototype.idIsValid = function (id) {
         var isValid = true;
-        if (isNaN(parseInt(id))) {
+        if (isNaN(id)) {
             isValid = false;
         }
-        if (!(id.length > 0 && id.length < 6)) {
+        if (!(id.toString().length > 0 && id.toString().length < 6)) {
             isValid = false;
         }
         return isValid;
@@ -82,11 +82,11 @@ var Controller = /** @class */ (function () {
             });
         });
     };
-    Controller.prototype.handlePostDatabaseIssue = function () {
+    Controller.prototype.handleDatabaseIssue = function (action) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, { responseCode: 500, message: "POST request was unsuccessful due to a database issue", data: null }];
+                    case 0: return [4 /*yield*/, { responseCode: 500, message: action + " request was unsuccessful due to a database issue", data: null }];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });

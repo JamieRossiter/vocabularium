@@ -1,5 +1,5 @@
 export type Cards = {
-    packId: string | null,
+    packId: number | null,
     cards: Array<Card> | null
 }
 

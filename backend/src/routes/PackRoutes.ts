@@ -28,8 +28,10 @@ class PackRoutes extends Routes {
     }
 
     override initializePutRoutes(): void {
-        this._server.put(this._url, (req: Express.Request, response: Express.Response) => {
-            console.log("Successful Put!");
+        this._server.put(this._url, (req: Express.Request, res: Express.Response) => {
+            this._controller.editPack(req.body).then(putRes => {
+                res.status(putRes.responseCode).send(putRes);
+            })
         })
     }
 

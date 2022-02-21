@@ -2,12 +2,12 @@ import ServerResponse from "../utils/ServerResponse";
 
 class Controller {
 
-    private idIsValid(id: string): boolean{
+    private idIsValid(id: number): boolean{
         let isValid: boolean = true;
-        if(isNaN(parseInt(id))){
+        if(isNaN(id)){
             isValid = false
         }
-        if(!(id.length > 0 && id.length < 6)){
+        if(!(id.toString().length > 0 && id.toString().length < 6)){
             isValid = false
         }
         return isValid;
@@ -36,8 +36,8 @@ class Controller {
         return await { responseCode: 400, message: "Request contains invalid Id", data: null }   
     }
 
-    protected async handlePostDatabaseIssue(): Promise<ServerResponse> {
-        return await { responseCode: 500, message: "POST request was unsuccessful due to a database issue", data: null }
+    protected async handleDatabaseIssue(action: string): Promise<ServerResponse> {
+        return await { responseCode: 500, message: `${action} request was unsuccessful due to a database issue`, data: null }
     }
 
     protected async handleInvalidRequestParamsOrBody(message: Array<string>): Promise<ServerResponse>{
