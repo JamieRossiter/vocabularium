@@ -122,8 +122,8 @@ var PackController = /** @class */ (function (_super) {
                 response = this.handleInvalidRequestId();
             }
             else {
-                if (!this.isEditDataValid(req)) {
-                    response = this.handleInvalidRequestParamsOrBody(["Request contains invalid body parameter(s)"]);
+                if (!this.isPackEditDataValid(req)) {
+                    response = this.handleInvalidRequestParamsOrBody(["Request contains invalid body parameter(s) for a pack"]);
                 }
                 else {
                     if (this._dao.editPackData(req)) {
@@ -137,7 +137,7 @@ var PackController = /** @class */ (function (_super) {
         }
         return response;
     };
-    PackController.prototype.isEditDataValid = function (data) {
+    PackController.prototype.isPackEditDataValid = function (data) {
         var isValid = true;
         var validKeys = [
             "packId",

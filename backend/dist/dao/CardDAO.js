@@ -107,6 +107,22 @@ var CardDAO = /** @class */ (function (_super) {
         }
         return successful;
     };
+    CardDAO.prototype.editCardsData = function (editData) {
+        var filter = { "packId": parseInt(editData.packId), "cards.cardId": parseInt(editData.cards.cardId) };
+        var updateQuery = {
+            $set: { "cards.$": editData.cards }
+        };
+        var successful;
+        try {
+            this.accessDb(this._collectionName, this._client).updateOne(filter, updateQuery);
+            successful = true;
+        }
+        catch (error) {
+            console.error(error);
+            successful = false;
+        }
+        return successful;
+    };
     CardDAO.prototype.generateDataRichCards = function (data, id) {
         return { packId: id, cards: data };
     };

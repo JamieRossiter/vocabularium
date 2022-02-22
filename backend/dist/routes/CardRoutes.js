@@ -44,8 +44,11 @@ var CardRoutes = /** @class */ (function (_super) {
         });
     };
     CardRoutes.prototype.initializePutRoutes = function () {
-        this._server.put(this._url, function (req, response) {
-            console.log("Successful Put!");
+        var _this = this;
+        this._server.put(this._url, function (req, res) {
+            _this._controller.editCards(req.body).then(function (putRes) {
+                res.status(putRes.responseCode).send(putRes);
+            });
         });
     };
     CardRoutes.prototype.initializeDeleteRoutes = function () {

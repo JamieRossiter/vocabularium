@@ -34,7 +34,7 @@ class CardController extends Controller {
         if(!this.requestContainsId(req)){
             response = this.handleNonexistentRequestId();
         } else {
-            if(this.requestHasValidId(req)){
+            if(!this.requestHasValidId(req)){
                 response = this.handleInvalidRequestId();
             } else {
 
@@ -54,6 +54,52 @@ class CardController extends Controller {
         return response;
     }
 
+    public editCards(req: any): Promise<ServerResponse> {
+        let response: Promise<ServerResponse>
+
+        if(!this.requestContainsId(req)){
+            response = this.handleNonexistentRequestId();
+        } else {
+            if(!this.requestHasValidId(req)){
+                response = this.handleInvalidRequestId();
+            } else {
+                if(!this.requestContainsCardsData(req)){
+                    response = this.handleNonExistentCardsData();
+                } else {
+                    if(!this.isCardsEditDataValid(req.cards)){
+                        response = this.handleInvalidRequestParamsOrBody(["Request contains invalid body parameter(s) for cards"])
+                    } else {
+                        if(this._dao.editCardsData(req)){
+                            response = this.handleCardDAOResponse(null, RequestActions.PUT);
+                        } else {
+                            response = this.handleDatabaseIssue(RequestActions.PUT);
+                        }
+                    }
+                }
+            }
+        }
+        return response;
+    }
+
+    private requestContainsCardsData(req: any): boolean {
+        return "cards" in req;
+    }
+
+    private isCardsEditDataValid(data: any): boolean {
+        let isValid: boolean = true;
+        let validKeys: Array<string> = 
+        [
+            "cardId",
+            "translated",
+            "untranslated"
+        ]
+        let editDataKeys: Array<string> = Object.keys(data);
+        editDataKeys.forEach(key => {
+            if(!validKeys.includes(key)) isValid = false;
+        })
+        return isValid;
+    }
+
     private isCardsDataValid(data: any): { valid: boolean, message: Array<string> } {
         let isValid: boolean = true
         let message: Array<string> = []
@@ -71,7 +117,12 @@ class CardController extends Controller {
             }
             if(!("translated" in c)){
                 isValid = false;
-                message.push("One or more cards in the request are missing untranslated vocab")
+                message.push("One or more cards in the request are missing translated vocab")
+                return;
+            }
+            if(!("cardId" in c)){
+                isValid = false;
+                message.push("One or more cards in the request are missing a cardId")
                 return;
             }
         })
@@ -81,6 +132,10 @@ class CardController extends Controller {
 
     private async handleCardDAOResponse(responseData: Cards | null, action: string): Promise<ServerResponse> {
         return { responseCode: 200, message: `Cards ${action} successful`, data: responseData }
+    }
+
+    private async handleNonExistentCardsData(): Promise<ServerResponse>{
+        return await { responseCode: 400, message: "Request does not contain cards data", data: null }
     }
 
 }

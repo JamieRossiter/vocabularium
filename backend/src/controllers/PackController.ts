@@ -64,8 +64,8 @@ class PackController extends Controller {
             if(!this.requestHasValidId(req)){
                 response = this.handleInvalidRequestId();
             } else {
-                if(!this.isEditDataValid(req)){
-                    response = this.handleInvalidRequestParamsOrBody(["Request contains invalid body parameter(s)"])
+                if(!this.isPackEditDataValid(req)){
+                    response = this.handleInvalidRequestParamsOrBody(["Request contains invalid body parameter(s) for a pack"])
                 } else {
                     if(this._dao.editPackData(req)){
                         response = this.handlePackDAOResponse(null, RequestActions.PUT);
@@ -78,7 +78,7 @@ class PackController extends Controller {
         return response;
     }
 
-    private isEditDataValid(data: any): boolean {
+    private isPackEditDataValid(data: any): boolean {
         let isValid: boolean = true;
         let validKeys: Array<string> = 
         [

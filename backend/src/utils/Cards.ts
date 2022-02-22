@@ -4,6 +4,7 @@ export type Cards = {
 }
 
 export type Card = {
+    cardId: number,
     translated: string,
     untranslated: string
 }

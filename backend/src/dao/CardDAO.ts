@@ -45,6 +45,22 @@ class CardDAO extends DAO {
         return successful;
     }
 
+    public editCardsData(editData: any): boolean {
+        const filter: { "packId": number, "cards.cardId": number } = { "packId": parseInt(editData.packId), "cards.cardId": parseInt(editData.cards.cardId) }
+        const updateQuery: { $set: any } = {
+            $set: { "cards.$": editData.cards }
+        }
+        let successful: boolean;
+        try {
+            this.accessDb(this._collectionName, this._client).updateOne(filter, updateQuery);
+            successful = true;
+        } catch (error: any) {
+            console.error(error);
+            successful = false;
+        }
+        return successful;
+    }
+
     private generateDataRichCards(data: Array<Card>, id: number): Cards {
         return { packId: id, cards: data }
     }

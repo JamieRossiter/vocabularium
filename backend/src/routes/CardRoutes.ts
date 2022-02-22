@@ -29,8 +29,10 @@ class CardRoutes extends Routes {
     }
 
     override initializePutRoutes(): void {
-        this._server.put(this._url, (req: Express.Request, response: Express.Response) => {
-            console.log("Successful Put!");
+        this._server.put(this._url, (req: Express.Request, res: Express.Response) => {
+            this._controller.editCards(req.body).then(putRes => {
+                res.status(putRes.responseCode).send(putRes);
+            })
         })
     }
 

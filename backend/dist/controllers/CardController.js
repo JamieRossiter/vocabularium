@@ -92,7 +92,7 @@ var CardController = /** @class */ (function (_super) {
             response = this.handleNonexistentRequestId();
         }
         else {
-            if (this.requestHasValidId(req)) {
+            if (!this.requestHasValidId(req)) {
                 response = this.handleInvalidRequestId();
             }
             else {
@@ -112,6 +112,53 @@ var CardController = /** @class */ (function (_super) {
         }
         return response;
     };
+    CardController.prototype.editCards = function (req) {
+        var response;
+        if (!this.requestContainsId(req)) {
+            response = this.handleNonexistentRequestId();
+        }
+        else {
+            if (!this.requestHasValidId(req)) {
+                response = this.handleInvalidRequestId();
+            }
+            else {
+                if (!this.requestContainsCardsData(req)) {
+                    response = this.handleNonExistentCardsData();
+                }
+                else {
+                    if (!this.isCardsEditDataValid(req.cards)) {
+                        response = this.handleInvalidRequestParamsOrBody(["Request contains invalid body parameter(s) for cards"]);
+                    }
+                    else {
+                        if (this._dao.editCardsData(req)) {
+                            response = this.handleCardDAOResponse(null, RequestActions_1.default.PUT);
+                        }
+                        else {
+                            response = this.handleDatabaseIssue(RequestActions_1.default.PUT);
+                        }
+                    }
+                }
+            }
+        }
+        return response;
+    };
+    CardController.prototype.requestContainsCardsData = function (req) {
+        return "cards" in req;
+    };
+    CardController.prototype.isCardsEditDataValid = function (data) {
+        var isValid = true;
+        var validKeys = [
+            "cardId",
+            "translated",
+            "untranslated"
+        ];
+        var editDataKeys = Object.keys(data);
+        editDataKeys.forEach(function (key) {
+            if (!validKeys.includes(key))
+                isValid = false;
+        });
+        return isValid;
+    };
     CardController.prototype.isCardsDataValid = function (data) {
         var isValid = true;
         var message = [];
@@ -127,7 +174,12 @@ var CardController = /** @class */ (function (_super) {
             }
             if (!("translated" in c)) {
                 isValid = false;
-                message.push("One or more cards in the request are missing untranslated vocab");
+                message.push("One or more cards in the request are missing translated vocab");
+                return;
+            }
+            if (!("cardId" in c)) {
+                isValid = false;
+                message.push("One or more cards in the request are missing a cardId");
                 return;
             }
         });
@@ -137,6 +189,16 @@ var CardController = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, { responseCode: 200, message: "Cards " + action + " successful", data: responseData }];
+            });
+        });
+    };
+    CardController.prototype.handleNonExistentCardsData = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, { responseCode: 400, message: "Request does not contain cards data", data: null }];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
             });
         });
     };
