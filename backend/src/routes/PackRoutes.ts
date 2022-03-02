@@ -14,7 +14,7 @@ class PackRoutes extends Routes {
     override initializeGetRoutes(): void {
         this._server.get(this._url, (req: Express.Request, res: Express.Response) => {
             this._controller.getPack(req.query).then(pack => {
-                res.status(pack.responseCode).send(pack);
+                res.status(pack.statusCode).send(pack);
             })
         })
     }
@@ -22,7 +22,7 @@ class PackRoutes extends Routes {
     override initializePostRoutes(): void {
         this._server.post(this._url, (req: Express.Request, res: Express.Response) => {
             this._controller.createPack(req.body).then(postRes => {
-                res.status(postRes.responseCode).send(postRes);
+                res.status(postRes.statusCode).send(postRes);
             })
         })
     }
@@ -30,7 +30,7 @@ class PackRoutes extends Routes {
     override initializePutRoutes(): void {
         this._server.put(this._url, (req: Express.Request, res: Express.Response) => {
             this._controller.editPack(req.body).then(putRes => {
-                res.status(putRes.responseCode).send(putRes);
+                res.status(putRes.statusCode).send(putRes);
             })
         })
     }

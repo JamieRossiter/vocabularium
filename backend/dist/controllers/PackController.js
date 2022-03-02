@@ -57,6 +57,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Controller_1 = __importDefault(require("./Controller"));
 var PackDAO_1 = __importDefault(require("../dao/PackDAO"));
 var RequestActions_1 = __importDefault(require("../utils/RequestActions"));
+var HTTPStatusCodes_1 = __importDefault(require("../utils/HTTPStatusCodes"));
 var PackController = /** @class */ (function (_super) {
     __extends(PackController, _super);
     function PackController() {
@@ -64,26 +65,62 @@ var PackController = /** @class */ (function (_super) {
         _this._dao = new PackDAO_1.default();
         return _this;
     }
+    // public async getPack(req: any): Promise<ServerResponse> {
+    //     let response: Promise<ServerResponse>;
+    //     if(!this.requestContainsId(req)){
+    //         response = this.handleNonexistentRequestId();
+    //     } else {
+    //         if(!this.requestHasValidId(req)){
+    //             response = this.handleInvalidRequestId();
+    //         } else {
+    //             response = this._dao.findPackById(parseInt(req.packId)).then(data => {
+    //                 return this.handlePackDAOResponse(data, RequestActions.GET);
+    //             })
+    //         }
+    //     }
+    //     return response;
+    // }
     PackController.prototype.getPack = function (req) {
-        return __awaiter(this, void 0, void 0, function () {
-            var response;
-            var _this = this;
-            return __generator(this, function (_a) {
-                if (!this.requestContainsId(req)) {
-                    response = this.handleNonexistentRequestId();
-                }
-                else {
-                    if (!this.requestHasValidId(req)) {
-                        response = this.handleInvalidRequestId();
+        var _this = this;
+        var status = HTTPStatusCodes_1.default.Success;
+        var message;
+        var error = false;
+        return this._dao.connectToDb().then(function (connected) {
+            if (!connected) {
+                status = HTTPStatusCodes_1.default.ServerError;
+                message = "There was a fatal error with the database.";
+                error = true;
+            }
+            if (!_this.requestContainsId(req)) {
+                status = HTTPStatusCodes_1.default.BadRequest;
+                message = "Request does not contain any 'packId' query parameter.";
+                error = true;
+            }
+            if (!_this.requestHasValidId(req)) {
+                status = HTTPStatusCodes_1.default.BadRequest;
+                message = "Request does not contain a valid 'packId' query parameter.";
+                error = true;
+            }
+            if (error) {
+                return new Promise(function (resolve, reject) {
+                    resolve(_this.createHTTPResponse(status, message));
+                    reject(new Error("Error resolving promise pertaining to following response: " + message));
+                });
+            }
+            else {
+                // Run below if packId is successfully sanitised.
+                return _this._dao.findPackById(parseInt(req.packId)).then(function (response) {
+                    console.log("find pack by id");
+                    if (!response) {
+                        status = HTTPStatusCodes_1.default.NotFound;
+                        message = "No match found for Pack ID: " + req.packId;
                     }
                     else {
-                        response = this._dao.getPackById(parseInt(req.packId)).then(function (data) {
-                            return _this.handlePackDAOResponse(data, RequestActions_1.default.GET);
-                        });
+                        message = JSON.stringify(response);
                     }
-                }
-                return [2 /*return*/, response];
-            });
+                    return _this.createHTTPResponse(status, message);
+                });
+            }
         });
     };
     PackController.prototype.createPack = function (req) {
@@ -189,10 +226,10 @@ var PackController = /** @class */ (function (_super) {
     PackController.prototype.handlePackDAOResponse = function (responseData, action) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, { responseCode: 200, message: "Pack " + action + " successful", data: responseData }];
+                return [2 /*return*/, { statusCode: 200, success: true, message: "Pack " + action + " successful" }];
             });
         });
-    };
+    }; // DEPRECATED!  
     return PackController;
 }(Controller_1.default));
 exports.default = PackController;

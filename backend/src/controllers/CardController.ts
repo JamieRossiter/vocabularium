@@ -131,11 +131,11 @@ class CardController extends Controller {
     }
 
     private async handleCardDAOResponse(responseData: Cards | null, action: string): Promise<ServerResponse> {
-        return { responseCode: 200, message: `Cards ${action} successful`, data: responseData }
+        return { statusCode: 200, success: true, message: `Cards ${action} successful` }
     }
 
     private async handleNonExistentCardsData(): Promise<ServerResponse>{
-        return await { responseCode: 400, message: "Request does not contain cards data", data: null }
+        return await { statusCode: 400, success: true, message: "Request does not contain cards data" }
     }
 
 }

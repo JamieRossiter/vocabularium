@@ -35,7 +35,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var HTTPStatusCodes_1 = __importDefault(require("../utils/HTTPStatusCodes"));
 var Controller = /** @class */ (function () {
     function Controller() {
     }
@@ -66,7 +70,7 @@ var Controller = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, { responseCode: 400, message: "Request does not contain id", data: null }];
+                    case 0: return [4 /*yield*/, { statusCode: HTTPStatusCodes_1.default.BadRequest, success: true, message: "Request does not contain id" }];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -76,17 +80,7 @@ var Controller = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, { responseCode: 400, message: "Request contains invalid Id", data: null }];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    Controller.prototype.handleDatabaseIssue = function (action) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, { responseCode: 500, message: action + " request was unsuccessful due to a database issue", data: null }];
+                    case 0: return [4 /*yield*/, { statusCode: HTTPStatusCodes_1.default.BadRequest, success: true, message: "Request contains invalid Id" }];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -95,9 +89,25 @@ var Controller = /** @class */ (function () {
     Controller.prototype.handleInvalidRequestParamsOrBody = function (message) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, { responseCode: 400, message: message, data: null }];
+                return [2 /*return*/, { statusCode: HTTPStatusCodes_1.default.BadRequest, success: true, message: message.toString() }];
             });
         });
+    };
+    Controller.prototype.handleDatabaseIssue = function (action) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, { statusCode: 500, success: true, message: action + " request was unsuccessful due to a database issue" }];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    }; // DEPRECATED
+    Controller.prototype.createHTTPResponse = function (status, msg) {
+        var isSuccessful = true;
+        if (!(status >= 200 && status <= 299))
+            isSuccessful = false;
+        return { statusCode: status, success: isSuccessful, message: msg };
     };
     return Controller;
 }());

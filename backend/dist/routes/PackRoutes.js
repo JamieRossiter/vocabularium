@@ -31,7 +31,7 @@ var PackRoutes = /** @class */ (function (_super) {
         var _this = this;
         this._server.get(this._url, function (req, res) {
             _this._controller.getPack(req.query).then(function (pack) {
-                res.status(pack.responseCode).send(pack);
+                res.status(pack.statusCode).send(pack);
             });
         });
     };
@@ -39,7 +39,7 @@ var PackRoutes = /** @class */ (function (_super) {
         var _this = this;
         this._server.post(this._url, function (req, res) {
             _this._controller.createPack(req.body).then(function (postRes) {
-                res.status(postRes.responseCode).send(postRes);
+                res.status(postRes.statusCode).send(postRes);
             });
         });
     };
@@ -47,7 +47,7 @@ var PackRoutes = /** @class */ (function (_super) {
         var _this = this;
         this._server.put(this._url, function (req, res) {
             _this._controller.editPack(req.body).then(function (putRes) {
-                res.status(putRes.responseCode).send(putRes);
+                res.status(putRes.statusCode).send(putRes);
             });
         });
     };

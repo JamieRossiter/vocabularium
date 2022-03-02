@@ -3,6 +3,7 @@ import ServerResponse from "../utils/ServerResponse";
 import PackDAO from "../dao/PackDAO";
 import Pack from "../utils/Pack";
 import RequestActions from "../utils/RequestActions";
+import HTTPStatusCodes from "../utils/HTTPStatusCodes";
 
 class PackController extends Controller {
 
@@ -13,20 +14,67 @@ class PackController extends Controller {
         this._dao = new PackDAO();
     }
 
-    public async getPack(req: any): Promise<ServerResponse> {
-        let response: Promise<ServerResponse>;
-        if(!this.requestContainsId(req)){
-            response = this.handleNonexistentRequestId();
-        } else {
+    // public async getPack(req: any): Promise<ServerResponse> {
+    //     let response: Promise<ServerResponse>;
+    //     if(!this.requestContainsId(req)){
+    //         response = this.handleNonexistentRequestId();
+    //     } else {
+    //         if(!this.requestHasValidId(req)){
+    //             response = this.handleInvalidRequestId();
+    //         } else {
+    //             response = this._dao.findPackById(parseInt(req.packId)).then(data => {
+    //                 return this.handlePackDAOResponse(data, RequestActions.GET);
+    //             })
+    //         }
+    //     }
+    //     return response;
+    // }
+
+    public getPack(req: any): Promise<ServerResponse> {
+
+        let status: number = HTTPStatusCodes.Success;
+        let message: string;
+        let error: boolean = false;
+
+        // Connect to the database
+        return this._dao.connectToDb().then((connected: boolean) => {
+
+            // Sanitise data
+            if(!connected){
+                status = HTTPStatusCodes.ServerError;
+                message = "There was a fatal error with the database.";
+                error = true;
+            }
+            if(!this.requestContainsId(req)){
+                status = HTTPStatusCodes.BadRequest;
+                message = "Request does not contain any 'packId' query parameter.";
+                error = true;
+            }
             if(!this.requestHasValidId(req)){
-                response = this.handleInvalidRequestId();
-            } else {
-                response = this._dao.getPackById(parseInt(req.packId)).then(data => {
-                    return this.handlePackDAOResponse(data, RequestActions.GET);
+                status = HTTPStatusCodes.BadRequest;
+                message = "Request does not contain a valid 'packId' query parameter.";
+                error = true;
+            }
+
+            // Run if the data was invalid
+            if(error){
+                return new Promise((resolve, reject) => {
+                    resolve(this.createHTTPResponse(status, message));
+                    reject(new Error(`Error resolving promise pertaining to following response: ${message}`));
                 })
             }
-        }
-        return response;
+
+            // Run below if data is valid
+            return this._dao.findPackById(parseInt(req.packId)).then(response => {
+                if(!response){
+                    status = HTTPStatusCodes.NotFound;
+                    message = `No match found for Pack ID: ${req.packId}`
+                } else {
+                    message = JSON.stringify(response);
+                } 
+                return this.createHTTPResponse(status, message);
+            })     
+        })
     }
 
     public createPack(req: any): Promise<ServerResponse> {
@@ -132,8 +180,8 @@ class PackController extends Controller {
     }
 
     private async handlePackDAOResponse(responseData: Pack | null, action: string): Promise<ServerResponse> {
-        return { responseCode: 200, message: `Pack ${action} successful`, data: responseData }
-    }   
+        return { statusCode: 200, success: true, message: `Pack ${action} successful` }
+    } // DEPRECATED!  
 
 }
 

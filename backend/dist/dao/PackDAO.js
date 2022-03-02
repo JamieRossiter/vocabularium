@@ -62,34 +62,26 @@ var PackDAO = /** @class */ (function (_super) {
         _this._collectionName = "packs";
         return _this;
     }
-    PackDAO.prototype.getPackById = function (packId) {
+    PackDAO.prototype.findPackById = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var query;
+            var query, collection;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        query = { packId: packId };
-                        return [4 /*yield*/, this.accessDb(this._collectionName, this._client).findOne(query) // Keep in mind that the connection is not awaited on the parent method. This could cause an issue.
+                        query = { packId: id };
+                        return [4 /*yield*/, this.accessCollection(this._collectionName)];
+                    case 1:
+                        collection = _a.sent();
+                        return [2 /*return*/, collection.findOne(query)
                                 .then(function (result) {
-                                var packData;
-                                if (!result) {
-                                    packData = _this.generateEmptyPack(packId);
-                                }
-                                else {
-                                    packData = _this.generateDataRichPack(result);
-                                }
                                 _this._client.close();
-                                return packData;
+                                return result;
                             })
                                 .catch(function (error) {
-                                var errorData;
-                                console.error(error);
                                 _this._client.close();
-                                errorData = _this.generateEmptyPack(packId);
-                                return errorData;
+                                return error;
                             })];
-                    case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
@@ -107,6 +99,7 @@ var PackDAO = /** @class */ (function (_super) {
         }
         return successful;
     };
+    // TODO: Make asynchronous
     PackDAO.prototype.editPackData = function (editData) {
         var filter = { packId: parseInt(editData.packId) };
         var updateQuery = {
@@ -114,7 +107,7 @@ var PackDAO = /** @class */ (function (_super) {
         };
         var successful;
         try {
-            this.accessDb(this._collectionName, this._client).updateOne(filter, updateQuery);
+            this.accessDb(this._collectionName, this._client).updateOne(filter, updateQuery); // TODO: Check if any documents were matched with result.matchedCount
             successful = true;
         }
         catch (error) {
@@ -123,10 +116,7 @@ var PackDAO = /** @class */ (function (_super) {
         }
         return successful;
     };
-    PackDAO.prototype.generateEmptyPack = function (packId) {
-        return { packId: packId, title: "", dateCreated: "", description: "", languageOptions: { languageLonghand: "", languageShorthand: "", countryCode: "" } };
-    };
-    PackDAO.prototype.generateDataRichPack = function (data) {
+    PackDAO.prototype.generatePack = function (data) {
         return { packId: data.id, title: data.title, dateCreated: data.dateCreated, description: data.description, languageOptions: { languageLonghand: data.languageOptions.languageLonghand, languageShorthand: data.languageOptions.languageShorthand, countryCode: data.languageOptions.countryCode } };
     };
     return PackDAO;

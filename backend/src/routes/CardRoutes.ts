@@ -15,7 +15,7 @@ class CardRoutes extends Routes {
     override initializeGetRoutes(): void {
         this._server.get(this._url, (req: Express.Request, res: Express.Response) => {
             this._controller.getCards(req.query).then(cards => {
-                res.status(cards.responseCode).send(cards);
+                res.status(cards.statusCode).send(cards);
             })
         })
     }
@@ -23,7 +23,7 @@ class CardRoutes extends Routes {
     override initializePostRoutes(): void {
         this._server.post(this._url, (req: Express.Request, res: Express.Response) => {
             this._controller.createCards(req.body).then(postRes => {
-                res.status(postRes.responseCode).send(postRes);
+                res.status(postRes.statusCode).send(postRes);
             })
         })
     }
@@ -31,7 +31,7 @@ class CardRoutes extends Routes {
     override initializePutRoutes(): void {
         this._server.put(this._url, (req: Express.Request, res: Express.Response) => {
             this._controller.editCards(req.body).then(putRes => {
-                res.status(putRes.responseCode).send(putRes);
+                res.status(putRes.statusCode).send(putRes);
             })
         })
     }

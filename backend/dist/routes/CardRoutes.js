@@ -31,7 +31,7 @@ var CardRoutes = /** @class */ (function (_super) {
         var _this = this;
         this._server.get(this._url, function (req, res) {
             _this._controller.getCards(req.query).then(function (cards) {
-                res.status(cards.responseCode).send(cards);
+                res.status(cards.statusCode).send(cards);
             });
         });
     };
@@ -39,7 +39,7 @@ var CardRoutes = /** @class */ (function (_super) {
         var _this = this;
         this._server.post(this._url, function (req, res) {
             _this._controller.createCards(req.body).then(function (postRes) {
-                res.status(postRes.responseCode).send(postRes);
+                res.status(postRes.statusCode).send(postRes);
             });
         });
     };
@@ -47,7 +47,7 @@ var CardRoutes = /** @class */ (function (_super) {
         var _this = this;
         this._server.put(this._url, function (req, res) {
             _this._controller.editCards(req.body).then(function (putRes) {
-                res.status(putRes.responseCode).send(putRes);
+                res.status(putRes.statusCode).send(putRes);
             });
         });
     };

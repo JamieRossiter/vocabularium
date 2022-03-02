@@ -1,4 +1,6 @@
 import ServerResponse from "../utils/ServerResponse";
+import Pack from "../utils/Pack";
+import HTTPStatusCodes from "../utils/HTTPStatusCodes";
 
 class Controller {
 
@@ -29,19 +31,25 @@ class Controller {
     }
 
     protected async handleNonexistentRequestId(): Promise<ServerResponse> {
-        return await { responseCode: 400, message: "Request does not contain id", data: null }
+        return await { statusCode: HTTPStatusCodes.BadRequest, success: true, message: "Request does not contain id" }
     }
 
     protected async handleInvalidRequestId(): Promise<ServerResponse> {
-        return await { responseCode: 400, message: "Request contains invalid Id", data: null }   
-    }
-
-    protected async handleDatabaseIssue(action: string): Promise<ServerResponse> {
-        return await { responseCode: 500, message: `${action} request was unsuccessful due to a database issue`, data: null }
+        return await { statusCode: HTTPStatusCodes.BadRequest, success: true, message: "Request contains invalid Id"  }   
     }
 
     protected async handleInvalidRequestParamsOrBody(message: Array<string>): Promise<ServerResponse>{
-        return { responseCode: 400, message: message, data: null}
+        return { statusCode: HTTPStatusCodes.BadRequest, success: true, message: message.toString() }
+    }
+
+    protected async handleDatabaseIssue(action: string): Promise<ServerResponse> {
+        return await { statusCode: 500, success: true, message: `${action} request was unsuccessful due to a database issue` }
+    } // DEPRECATED
+
+    protected createHTTPResponse(status: number, msg: string): ServerResponse {
+        let isSuccessful: boolean = true;
+        if(!(status >= 200 && status <= 299)) isSuccessful = false;
+        return { statusCode: status, success: isSuccessful, message: msg };
     }
 
 }

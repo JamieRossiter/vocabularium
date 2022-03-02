@@ -188,7 +188,7 @@ var CardController = /** @class */ (function (_super) {
     CardController.prototype.handleCardDAOResponse = function (responseData, action) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, { responseCode: 200, message: "Cards " + action + " successful", data: responseData }];
+                return [2 /*return*/, { statusCode: 200, success: true, message: "Cards " + action + " successful" }];
             });
         });
     };
@@ -196,7 +196,7 @@ var CardController = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, { responseCode: 400, message: "Request does not contain cards data", data: null }];
+                    case 0: return [4 /*yield*/, { statusCode: 400, success: true, message: "Request does not contain cards data" }];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });

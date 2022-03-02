@@ -1,5 +1,7 @@
 import DAO from "./DAO";
 import Pack from "../utils/Pack";
+import DAOResponse from "../utils/DAOResponse";
+import HTTPStatusCodes from "../utils/HTTPStatusCodes";
 
 class PackDAO extends DAO {
 
@@ -10,25 +12,17 @@ class PackDAO extends DAO {
         this._collectionName = "packs"
     }
 
-    public async getPackById(packId: number): Promise<Pack> {
-        const query: { packId: number } = { packId: packId };
-        return await this.accessDb(this._collectionName, this._client).findOne(query) // Keep in mind that the connection is not awaited on the parent method. This could cause an issue.
-        .then(result => {
-            let packData: Pack;
-            if(!result) {
-                packData = this.generateEmptyPack(packId);
-            } else {
-                packData = this.generateDataRichPack(result);
-            }
+    public async findPackById(id: number): Promise<object | null> {
+        const query: { packId: number } = { packId: id };
+        const collection = await this.accessCollection(this._collectionName);
+        return collection.findOne(query)
+        .then((result: object | null) => {
             this._client.close();
-            return packData;
+            return result;
         })
-        .catch(error => {
-            let errorData: Pack;
-            console.error(error);
+        .catch((error: Error) => {
             this._client.close();
-            errorData = this.generateEmptyPack(packId)
-            return errorData;
+            return error;
         })
     }
 
@@ -45,6 +39,7 @@ class PackDAO extends DAO {
         return successful
     }
 
+    // TODO: Make asynchronous
     public editPackData(editData: any): boolean {
         const filter: { packId: number } = { packId: parseInt(editData.packId)}
         const updateQuery: { $set: any } = { 
@@ -52,7 +47,7 @@ class PackDAO extends DAO {
         }
         let successful: boolean;
         try {
-            this.accessDb(this._collectionName, this._client).updateOne(filter, updateQuery);
+            this.accessDb(this._collectionName, this._client).updateOne(filter, updateQuery); // TODO: Check if any documents were matched with result.matchedCount
             successful = true;
         } catch (error: any){
             console.error(error);
@@ -61,11 +56,7 @@ class PackDAO extends DAO {
         return successful;
     }
 
-    private generateEmptyPack(packId: number): Pack {
-        return { packId: packId, title: "", dateCreated: "", description: "", languageOptions: { languageLonghand: "", languageShorthand: "", countryCode: "" }}
-    }
-
-    private generateDataRichPack(data: any): Pack {
+    private generatePack(data: any): Pack {
         return { packId: data.id, title: data.title, dateCreated: data.dateCreated, description: data.description, languageOptions: { languageLonghand: data.languageOptions.languageLonghand, languageShorthand: data.languageOptions.languageShorthand, countryCode: data.languageOptions.countryCode } }
     }
 
