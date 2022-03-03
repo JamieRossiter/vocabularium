@@ -2,6 +2,7 @@ import DAO from "./DAO";
 import Pack from "../utils/Pack";
 import DAOResponse from "../utils/DAOResponse";
 import HTTPStatusCodes from "../utils/HTTPStatusCodes";
+import { InsertOneResult } from "mongodb";
 
 class PackDAO extends DAO {
 
@@ -12,7 +13,7 @@ class PackDAO extends DAO {
         this._collectionName = "packs"
     }
 
-    public async findPackById(id: number): Promise<object | null> {
+    public async findPackById(id: number): Promise<object | null | Error> {
         const query: { packId: number } = { packId: id };
         const collection = await this.accessCollection(this._collectionName);
         return collection.findOne(query)
@@ -26,17 +27,18 @@ class PackDAO extends DAO {
         })
     }
 
-    public createNewPack(packData: Pack): boolean {
+    public async insertPackByData(packData: Pack): Promise<InsertOneResult | Error> {
         const query: Pack = packData;
-        let successful: boolean
-        try {
-            this.accessDb(this._collectionName, this._client).insertOne(query);
-            successful = true;
-        } catch (error: any){
-            console.error(error);
-            successful = false;
-        }
-        return successful
+        const collection = await this.accessCollection(this._collectionName);
+        return collection.insertOne(query)
+        .then((result: InsertOneResult) => {
+            this._client.close();
+            return result;
+        })
+        .catch((error: Error) => {
+            this._client.close();
+            return error;
+        })
     }
 
     // TODO: Make asynchronous
@@ -54,10 +56,6 @@ class PackDAO extends DAO {
             successful = false;
         }
         return successful;
-    }
-
-    private generatePack(data: any): Pack {
-        return { packId: data.id, title: data.title, dateCreated: data.dateCreated, description: data.description, languageOptions: { languageLonghand: data.languageOptions.languageLonghand, languageShorthand: data.languageOptions.languageShorthand, countryCode: data.languageOptions.countryCode } }
     }
 
 }

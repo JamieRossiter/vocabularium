@@ -4,6 +4,7 @@ import PackDAO from "../dao/PackDAO";
 import Pack from "../utils/Pack";
 import RequestActions from "../utils/RequestActions";
 import HTTPStatusCodes from "../utils/HTTPStatusCodes";
+import { InsertOneResult } from "mongodb";
 
 class PackController extends Controller {
 
@@ -30,7 +31,7 @@ class PackController extends Controller {
     //     return response;
     // }
 
-    public getPack(req: any): Promise<ServerResponse> {
+    public async getPack(req: any): Promise<ServerResponse> {
 
         let status: number = HTTPStatusCodes.Success;
         let message: string;
@@ -47,16 +48,17 @@ class PackController extends Controller {
             }
             if(!this.requestContainsId(req)){
                 status = HTTPStatusCodes.BadRequest;
-                message = "Request does not contain any 'packId' query parameter.";
+                message = "Request does not contain a 'packId' query parameter.";
                 error = true;
-            }
-            if(!this.requestHasValidId(req)){
-                status = HTTPStatusCodes.BadRequest;
-                message = "Request does not contain a valid 'packId' query parameter.";
-                error = true;
+            } else {
+                if(!this.requestHasValidId(req)){
+                    status = HTTPStatusCodes.BadRequest;
+                    message = "Request does not contain a valid 'packId' query parameter.";
+                    error = true;
+                }
             }
 
-            // Run if the data was invalid
+            // Run if data is invalid
             if(error){
                 return new Promise((resolve, reject) => {
                     resolve(this.createHTTPResponse(status, message));
@@ -64,8 +66,8 @@ class PackController extends Controller {
                 })
             }
 
-            // Run below if data is valid
-            return this._dao.findPackById(parseInt(req.packId)).then(response => {
+            // Run if data is valid
+            return this._dao.findPackById(parseInt(req.packId)).then((response: object | null | Error) => {
                 if(!response){
                     status = HTTPStatusCodes.NotFound;
                     message = `No match found for Pack ID: ${req.packId}`
@@ -77,30 +79,57 @@ class PackController extends Controller {
         })
     }
 
-    public createPack(req: any): Promise<ServerResponse> {
-        let response: Promise<ServerResponse>
+    public async createPack(req: any): Promise<ServerResponse> {
+        
+        let status: number = HTTPStatusCodes.Success;
+        let message: string;
+        let error: boolean = false;
 
-        if(!this.requestContainsId(req)){
-            response = this.handleNonexistentRequestId();
-        } else {
-            if(!this.requestHasValidId(req)){
-                response = this.handleInvalidRequestId();
-            } else {
+        return this._dao.connectToDb().then((connected: boolean) => {
 
-                let validityObject = this.isPackDataValid(req)
-                if(!validityObject.valid){
-                    response = this.handleInvalidRequestParamsOrBody(validityObject.message)
-                } else {
-                    if(this._dao.createNewPack(req)){
-                        response = this.handlePackDAOResponse(null, RequestActions.POST)
-                    } else {
-                        response = this.handleDatabaseIssue(RequestActions.POST);
-                    }
-                }
-                
+             // Sanitise data
+             const validatedBody: { valid: boolean, message: Array<string> } = this.isCreateBodyValid(req);
+             if(!validatedBody.valid){
+                status = HTTPStatusCodes.BadRequest;
+                message = validatedBody.message.toString();
+                error = true;
+             }
+             if(!connected){
+                status = HTTPStatusCodes.ServerError;
+                message = "There was a fatal error with the database.";
+                error = true;
             }
-        }
-        return response;
+            if(!this.requestContainsId(req)){
+                status = HTTPStatusCodes.BadRequest;
+                message = "Request does not contain a 'packId' body parameter.";
+                error = true;
+            } else {
+                if(!this.requestHasValidId(req)){
+                    status = HTTPStatusCodes.BadRequest;
+                    message = "Request does not contain a valid 'packId' query parameter.";
+                    error = true;
+                }
+            }
+
+            // Run if the data is invalid
+            if(error){
+                return new Promise((resolve, reject) => {
+                    resolve(this.createHTTPResponse(status, message));
+                    reject(new Error(`Error resolving promise pertaining to following response: ${message}`));
+                })
+            }
+
+            // Run if data is valid
+            return this._dao.insertPackByData(req).then((response: InsertOneResult | Error) => {
+                if(!(response as InsertOneResult).acknowledged){
+                    status = HTTPStatusCodes.ServerError;
+                    message = `Could not insert document: ${req} due to a database error.`
+                } else {
+                    message = JSON.stringify(req);
+                }
+                return this.createHTTPResponse(status, message);
+            }) 
+        })
     }
 
     public editPack(req: any): Promise<ServerResponse> {
@@ -112,7 +141,7 @@ class PackController extends Controller {
             if(!this.requestHasValidId(req)){
                 response = this.handleInvalidRequestId();
             } else {
-                if(!this.isPackEditDataValid(req)){
+                if(!this.isEditBodyValid(req)){
                     response = this.handleInvalidRequestParamsOrBody(["Request contains invalid body parameter(s) for a pack"])
                 } else {
                     if(this._dao.editPackData(req)){
@@ -126,7 +155,7 @@ class PackController extends Controller {
         return response;
     }
 
-    private isPackEditDataValid(data: any): boolean {
+    private isEditBodyValid(data: any): boolean {
         let isValid: boolean = true;
         let validKeys: Array<string> = 
         [
@@ -143,7 +172,7 @@ class PackController extends Controller {
         return isValid;
     }
 
-    private isPackDataValid(data: any): { valid: boolean, message: Array<string> } {
+    private isCreateBodyValid(data: any): { valid: boolean, message: Array<string> } {
         let isValid: boolean = true
         let message: Array<string> = []
 

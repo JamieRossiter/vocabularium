@@ -86,18 +86,29 @@ var PackDAO = /** @class */ (function (_super) {
             });
         });
     };
-    PackDAO.prototype.createNewPack = function (packData) {
-        var query = packData;
-        var successful;
-        try {
-            this.accessDb(this._collectionName, this._client).insertOne(query);
-            successful = true;
-        }
-        catch (error) {
-            console.error(error);
-            successful = false;
-        }
-        return successful;
+    PackDAO.prototype.insertPackByData = function (packData) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, collection;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        query = packData;
+                        return [4 /*yield*/, this.accessCollection(this._collectionName)];
+                    case 1:
+                        collection = _a.sent();
+                        return [2 /*return*/, collection.insertOne(query)
+                                .then(function (result) {
+                                _this._client.close();
+                                return result;
+                            })
+                                .catch(function (error) {
+                                _this._client.close();
+                                return error;
+                            })];
+                }
+            });
+        });
     };
     // TODO: Make asynchronous
     PackDAO.prototype.editPackData = function (editData) {
