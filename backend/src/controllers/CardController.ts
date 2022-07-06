@@ -2,7 +2,10 @@ import Controller from "./Controller";
 import CardDAO from "../dao/CardDAO";
 import ServerResponse from "../utils/ServerResponse";
 import RequestActions from "../utils/RequestActions";
+import HTTPStatusCodes from "../utils/HTTPStatusCodes";
 import { Cards } from "../utils/Cards";
+import { InsertOneResult, UpdateResult } from "mongodb";
+import { response } from "express";
 
 class CardController extends Controller {
 
@@ -13,83 +16,224 @@ class CardController extends Controller {
     }
 
     public async getCards(req: any): Promise<ServerResponse>{
-        let response: Promise<ServerResponse>;
-        if(!this.requestContainsId(req)){
-            response = this.handleNonexistentRequestId();
-        } else {
-            if(!this.requestHasValidId(req)){
-                response = this.handleInvalidRequestId();
+
+        let status: number = HTTPStatusCodes.Success;
+        let message: string;
+        let error: boolean = false;
+
+        // Connect to the database
+        return this._dao.connectToDb().then((connected: boolean) => {
+
+            // Sanitise data
+            if(!connected){
+                status = HTTPStatusCodes.ServerError;
+                message = "There was a fatal error with the database.";
+                error = true;
+            }
+            if(!this.requestContainsId(req)){
+                status = HTTPStatusCodes.BadRequest;
+                message = "Request does not contain a 'packId' query parameter.";
+                error = true;
             } else {
-                response = this._dao.getCardsByPackId(req.id).then(data => {
-                    return this.handleCardDAOResponse(data, RequestActions.GET);
+                if(!this.requestHasValidId(req)){
+                    status = HTTPStatusCodes.BadRequest;
+                    message = "Request does not contain a valid 'packId' query parameter.";
+                    error = true;
+                }
+            }
+
+            // Run if data is invalid
+            if(error){
+                return new Promise((resolve, reject) => {
+                    resolve(this.createHTTPResponse(status, message));
+                    reject(new Error(`Error resolving promise pertaining to following response: ${message}`));
                 })
             }
-        }
-        return response;
+
+            // Run if data is valid
+            return this._dao.findCardsByPackId(parseInt(req.packId)).then((response: object | null | Error) => {
+                if(!response){
+                    status = HTTPStatusCodes.NotFound;
+                    message = `No match found for Cards with Pack ID: ${req.packId}`
+                } else {
+                    message = JSON.stringify(response);
+                } 
+                return this.createHTTPResponse(status, message);
+            })     
+        })
+
     }
 
-    public createCards(req: any): Promise<ServerResponse> {
-        let response: Promise<ServerResponse>
+    public async createCards(req: any): Promise<ServerResponse> {
+        let status: number = HTTPStatusCodes.Success;
+        let message: string;
+        let error: boolean = false;
 
-        if(!this.requestContainsId(req)){
-            response = this.handleNonexistentRequestId();
-        } else {
-            if(!this.requestHasValidId(req)){
-                response = this.handleInvalidRequestId();
-            } else {
+        return this._dao.connectToDb().then((connected: boolean) => {
 
-                let validityObject = this.isCardsDataValid(req)
-                if(!validityObject.valid){
-                    response = this.handleInvalidRequestParamsOrBody(validityObject.message)
-                } else {
-                    if(this._dao.createNewCards(req)){
-                        response = this.handleCardDAOResponse(null, RequestActions.POST)
-                    } else {
-                        response = this.handleDatabaseIssue(RequestActions.POST);
-                    }
-                }
-                
+            // Sanitise data
+            const validatedBody: { valid: boolean, message: Array<string> } = this.isCreateBodyValid(req);
+            if(!validatedBody.valid){
+                status = HTTPStatusCodes.BadRequest;
+                message = validatedBody.message.toString();
+                error = true;
             }
-        }
-        return response;
-    }
-
-    public editCards(req: any): Promise<ServerResponse> {
-        let response: Promise<ServerResponse>
-
-        if(!this.requestContainsId(req)){
-            response = this.handleNonexistentRequestId();
-        } else {
-            if(!this.requestHasValidId(req)){
-                response = this.handleInvalidRequestId();
+            if(!connected){
+                status = HTTPStatusCodes.ServerError;
+                message = "There was a fatal error with the database.";
+                error = true;
+            }
+            if(!this.requestContainsCardsData(req)){ // Note: When refactoring, be aware that this is a unique sanitisation method for Cards
+                status = HTTPStatusCodes.BadRequest;
+                message = "Request does not contain card data.";
+                error = true;
+            }
+            if(!this.requestContainsId(req)){
+                status = HTTPStatusCodes.BadRequest;
+                message = "Request does not contain a 'packId' body parameter.";
+                error = true;
             } else {
-                if(!this.requestContainsCardsData(req)){
-                    response = this.handleNonExistentCardsData();
-                } else {
-                    if(!this.isCardsEditDataValid(req.cards)){
-                        response = this.handleInvalidRequestParamsOrBody(["Request contains invalid body parameter(s) for cards"])
-                    } else {
-                        if(this._dao.editCardsData(req)){
-                            response = this.handleCardDAOResponse(null, RequestActions.PUT);
-                        } else {
-                            response = this.handleDatabaseIssue(RequestActions.PUT);
-                        }
-                    }
+                if(!this.requestHasValidId(req)){
+                    status = HTTPStatusCodes.BadRequest;
+                    message = "Request does not contain a valid 'packId' query parameter.";
+                    error = true;
                 }
             }
-        }
-        return response;
+
+            // Run if the data is invalid
+            if(error){
+                return new Promise((resolve, reject) => {
+                    resolve(this.createHTTPResponse(status, message));
+                    reject(new Error(`Error resolving promise pertaining to following response: ${message}`));
+                })
+            }
+
+            // Run if data is valid
+            return this._dao.insertCardsByData(req).then((response: InsertOneResult | Error) => {
+                if(!(response as InsertOneResult).acknowledged){
+                    status = HTTPStatusCodes.ServerError;
+                    message = `Could not insert document: ${req} due to a database error.`
+                } else {
+                    message = JSON.stringify(req);
+                }
+                return this.createHTTPResponse(status, message);
+            }) 
+        })
     }
+
+    public async editCards(req: any): Promise<ServerResponse> {
+
+        let status: number = HTTPStatusCodes.Success;
+        let message: string;
+        let error: boolean = false;
+
+        return this._dao.connectToDb().then((connected: boolean) => {
+
+            // Sanitise data
+            const validatedBody: boolean = this.isEditBodyValid(req);
+            if(!validatedBody){
+                status = HTTPStatusCodes.BadRequest;
+                message = "Request does not contain a valid body."
+                error = true;
+            }
+            if(!connected){
+                status = HTTPStatusCodes.ServerError;
+                message = "There was a fatal error with the database.";
+                error = true;
+            }
+            if(!this.requestContainsId(req)){
+                status = HTTPStatusCodes.BadRequest;
+                message = "Request does not contain a 'packId' body parameter.";
+                error = true;
+            } else {
+                if(!this.requestHasValidId(req)){
+                    status = HTTPStatusCodes.BadRequest;
+                    message = "Request does not contain a valid 'packId' query parameter.";
+                    error = true;
+                }
+            }
+
+            // Run if the data is invalid
+            if(error){
+                return new Promise((resolve, reject) => {
+                    resolve(this.createHTTPResponse(status, message));
+                    reject(new Error(`Error resolving promise pertaining to following response: ${message}`));
+                })
+            }   
+
+            // Run if data is valid
+            return this._dao.editCardsByData(req).then((response: UpdateResult | Error) => {
+                if(!(response as UpdateResult).acknowledged){
+                    status = HTTPStatusCodes.ServerError;
+                    message = `Could not update document: ${req} due to a database error.`
+                } else {
+                    message = JSON.stringify(req);
+                }
+                return this.createHTTPResponse(status, message);
+            }) 
+
+        })
+    }
+
+    public async deleteCards(req: any): Promise<ServerResponse> {
+
+        let status: number = HTTPStatusCodes.Success;
+        let message: string;
+        let error: boolean = false;
+
+        // Connect to the database
+        return this._dao.connectToDb().then((connected: boolean) => {
+        
+            // Sanitise data
+            if(!connected){
+                status = HTTPStatusCodes.ServerError;
+                message = "There was a fatal error with the database.";
+                error = true;
+            }
+            if(!this.requestContainsId(req)){
+                status = HTTPStatusCodes.BadRequest;
+                message = "Request does not contain a 'packId' query parameter.";
+                error = true;
+            } else {
+                if(!this.requestHasValidId(req)){
+                    status = HTTPStatusCodes.BadRequest;
+                    message = "Request does not contain a valid 'packId' query parameter.";
+                    error = true;
+                }
+            }
+
+            // Run if data is invalid
+            if(error){
+                return new Promise((resolve, reject) => {
+                    resolve(this.createHTTPResponse(status, message));
+                    reject(new Error(`Error resolving promise pertaining to following response: ${message}`));
+                })
+            }
+
+            // Run if data is valid
+            return this._dao.deleteCardsById(parseInt(req.packId)).then((response: object | null | Error) => {
+                if(!response){
+                    status = HTTPStatusCodes.NotFound;
+                    message = `No match found for Pack ID: ${req.packId}`
+                } else {
+                    message = JSON.stringify(response);
+                } 
+                return this.createHTTPResponse(status, message);
+            }) 
+        }
+    )}
 
     private requestContainsCardsData(req: any): boolean {
         return "cards" in req;
     }
 
-    private isCardsEditDataValid(data: any): boolean {
+    private isEditBodyValid(data: any): boolean {
         let isValid: boolean = true;
         let validKeys: Array<string> = 
         [
+            "packId",
             "cardId",
+            "cards",
             "translated",
             "untranslated"
         ]
@@ -100,7 +244,7 @@ class CardController extends Controller {
         return isValid;
     }
 
-    private isCardsDataValid(data: any): { valid: boolean, message: Array<string> } {
+    private isCreateBodyValid(data: any): { valid: boolean, message: Array<string> } {
         let isValid: boolean = true
         let message: Array<string> = []
 
@@ -130,13 +274,13 @@ class CardController extends Controller {
         return { valid: isValid, message: message }
     }
 
-    private async handleCardDAOResponse(responseData: Cards | null, action: string): Promise<ServerResponse> {
-        return { statusCode: 200, success: true, message: `Cards ${action} successful` }
-    }
+    // private async handleCardDAOResponse(responseData: Cards | null, action: string): Promise<ServerResponse> {
+    //     return { statusCode: 200, success: true, message: `Cards ${action} successful` }
+    // } // DEPRECATED!
 
-    private async handleNonExistentCardsData(): Promise<ServerResponse>{
-        return await { statusCode: 400, success: true, message: "Request does not contain cards data" }
-    }
+    // private async handleNonExistentCardsData(): Promise<ServerResponse>{
+    //     return await { statusCode: 400, success: true, message: "Request does not contain cards data" }
+    // }
 
 }
 

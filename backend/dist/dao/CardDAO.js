@@ -62,72 +62,104 @@ var CardDAO = /** @class */ (function (_super) {
         _this._collectionName = "cards";
         return _this;
     }
-    CardDAO.prototype.getCardsByPackId = function (packId) {
+    CardDAO.prototype.findCardsByPackId = function (packId) {
         return __awaiter(this, void 0, void 0, function () {
-            var query;
+            var query, collection;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         query = { packId: packId };
-                        return [4 /*yield*/, this.accessDb(this._collectionName, this._client).findOne(query) // Keep in mind that the connection is not awaited on the parent method. This could cause an issue.
+                        return [4 /*yield*/, this.accessCollection(this._collectionName)];
+                    case 1:
+                        collection = _a.sent();
+                        return [2 /*return*/, collection.findOne(query)
                                 .then(function (result) {
-                                var cardsData;
-                                if (!result) {
-                                    cardsData = _this.generateEmptyCards();
-                                }
-                                else {
-                                    cardsData = _this.generateDataRichCards(result.cards, packId);
-                                }
                                 _this._client.close();
-                                return cardsData;
+                                return result;
                             })
                                 .catch(function (error) {
-                                var errorData;
-                                console.error(error);
                                 _this._client.close();
-                                errorData = _this.generateEmptyCards();
-                                return errorData;
+                                return error;
                             })];
-                    case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
     };
-    CardDAO.prototype.createNewCards = function (cardsData) {
-        var query = cardsData;
-        var successful;
-        try {
-            this.accessDb(this._collectionName, this._client).insertOne(query);
-            successful = true;
-        }
-        catch (error) {
-            console.error(error);
-            successful = false;
-        }
-        return successful;
+    CardDAO.prototype.insertCardsByData = function (cardsData) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, collection;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        query = cardsData;
+                        return [4 /*yield*/, this.accessCollection(this._collectionName)];
+                    case 1:
+                        collection = _a.sent();
+                        return [2 /*return*/, collection.insertOne(query)
+                                .then(function (result) {
+                                _this._client.close();
+                                return result;
+                            })
+                                .catch(function (error) {
+                                _this._client.close();
+                                return error;
+                            })];
+                }
+            });
+        });
     };
-    CardDAO.prototype.editCardsData = function (editData) {
-        var filter = { "packId": parseInt(editData.packId), "cards.cardId": parseInt(editData.cards.cardId) };
-        var updateQuery = {
-            $set: { "cards.$": editData.cards }
-        };
-        var successful;
-        try {
-            this.accessDb(this._collectionName, this._client).updateOne(filter, updateQuery);
-            successful = true;
-        }
-        catch (error) {
-            console.error(error);
-            successful = false;
-        }
-        return successful;
+    CardDAO.prototype.editCardsByData = function (editData) {
+        return __awaiter(this, void 0, void 0, function () {
+            var filter, updateQuery, collection;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        filter = { "packId": parseInt(editData.packId), "cards.cardId": parseInt(editData.cards.cardId) };
+                        updateQuery = {
+                            $set: { "cards.$": editData.cards }
+                        };
+                        return [4 /*yield*/, this.accessCollection(this._collectionName)];
+                    case 1:
+                        collection = _a.sent();
+                        return [2 /*return*/, collection.updateOne(filter, updateQuery)
+                                .then(function (result) {
+                                _this._client.close();
+                                return result;
+                            })
+                                .catch(function (error) {
+                                _this._client.close();
+                                return error;
+                            })];
+                }
+            });
+        });
     };
-    CardDAO.prototype.generateDataRichCards = function (data, id) {
-        return { packId: id, cards: data };
-    };
-    CardDAO.prototype.generateEmptyCards = function () {
-        return { packId: null, cards: null };
+    CardDAO.prototype.deleteCardsById = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, collection;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        query = { packId: id };
+                        return [4 /*yield*/, this.accessCollection(this._collectionName)];
+                    case 1:
+                        collection = _a.sent();
+                        return [2 /*return*/, collection.deleteOne(query)
+                                .then(function (result) {
+                                _this._client.close();
+                                return result;
+                            })
+                                .catch(function (error) {
+                                _this._client.close();
+                                return error;
+                            })];
+                }
+            });
+        });
     };
     return CardDAO;
 }(DAO_1.default));

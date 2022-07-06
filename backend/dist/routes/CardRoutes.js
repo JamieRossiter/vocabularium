@@ -52,8 +52,11 @@ var CardRoutes = /** @class */ (function (_super) {
         });
     };
     CardRoutes.prototype.initializeDeleteRoutes = function () {
-        this._server.put(this._url, function (req, response) {
-            console.log("Successful Delete!");
+        var _this = this;
+        this._server.delete(this._url, function (req, res) {
+            _this._controller.deleteCards(req.query).then(function (deleteRes) {
+                res.status(deleteRes.statusCode).send(deleteRes);
+            });
         });
     };
     return CardRoutes;

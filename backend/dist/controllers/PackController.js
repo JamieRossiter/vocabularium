@@ -56,7 +56,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Controller_1 = __importDefault(require("./Controller"));
 var PackDAO_1 = __importDefault(require("../dao/PackDAO"));
-var RequestActions_1 = __importDefault(require("../utils/RequestActions"));
 var HTTPStatusCodes_1 = __importDefault(require("../utils/HTTPStatusCodes"));
 var PackController = /** @class */ (function (_super) {
     __extends(PackController, _super);
@@ -65,21 +64,6 @@ var PackController = /** @class */ (function (_super) {
         _this._dao = new PackDAO_1.default();
         return _this;
     }
-    // public async getPack(req: any): Promise<ServerResponse> {
-    //     let response: Promise<ServerResponse>;
-    //     if(!this.requestContainsId(req)){
-    //         response = this.handleNonexistentRequestId();
-    //     } else {
-    //         if(!this.requestHasValidId(req)){
-    //             response = this.handleInvalidRequestId();
-    //         } else {
-    //             response = this._dao.findPackById(parseInt(req.packId)).then(data => {
-    //                 return this.handlePackDAOResponse(data, RequestActions.GET);
-    //             })
-    //         }
-    //     }
-    //     return response;
-    // }
     PackController.prototype.getPack = function (req) {
         return __awaiter(this, void 0, void 0, function () {
             var status, message, error;
@@ -131,20 +115,18 @@ var PackController = /** @class */ (function (_super) {
     };
     PackController.prototype.createPack = function (req) {
         return __awaiter(this, void 0, void 0, function () {
-            var status, message, invalid, error;
+            var status, message, error;
             var _this = this;
             return __generator(this, function (_a) {
                 status = HTTPStatusCodes_1.default.Success;
-                invalid = false;
                 error = false;
                 return [2 /*return*/, this._dao.connectToDb().then(function (connected) {
                         // Sanitise data
-                        var validatedBody = _this.isPackBodyValid(req);
+                        var validatedBody = _this.isCreateBodyValid(req);
                         if (!validatedBody.valid) {
                             status = HTTPStatusCodes_1.default.BadRequest;
                             message = validatedBody.message.toString();
                             error = true;
-                            invalid = true;
                         }
                         if (!connected) {
                             status = HTTPStatusCodes_1.default.ServerError;
@@ -186,31 +168,109 @@ var PackController = /** @class */ (function (_super) {
         });
     };
     PackController.prototype.editPack = function (req) {
-        var response;
-        if (!this.requestContainsId(req)) {
-            response = this.handleNonexistentRequestId();
-        }
-        else {
-            if (!this.requestHasValidId(req)) {
-                response = this.handleInvalidRequestId();
-            }
-            else {
-                if (!this.isPackEditDataValid(req)) {
-                    response = this.handleInvalidRequestParamsOrBody(["Request contains invalid body parameter(s) for a pack"]);
-                }
-                else {
-                    if (this._dao.editPackData(req)) {
-                        response = this.handlePackDAOResponse(null, RequestActions_1.default.PUT);
-                    }
-                    else {
-                        response = this.handleDatabaseIssue(RequestActions_1.default.PUT);
-                    }
-                }
-            }
-        }
-        return response;
+        return __awaiter(this, void 0, void 0, function () {
+            var status, message, error;
+            var _this = this;
+            return __generator(this, function (_a) {
+                status = HTTPStatusCodes_1.default.Success;
+                error = false;
+                return [2 /*return*/, this._dao.connectToDb().then(function (connected) {
+                        // Sanitise data
+                        var validatedBody = _this.isEditBodyValid(req);
+                        if (!validatedBody) {
+                            status = HTTPStatusCodes_1.default.BadRequest;
+                            message = "Request does not contain a valid body.";
+                            error = true;
+                        }
+                        if (!connected) {
+                            status = HTTPStatusCodes_1.default.ServerError;
+                            message = "There was a fatal error with the database.";
+                            error = true;
+                        }
+                        if (!_this.requestContainsId(req)) {
+                            status = HTTPStatusCodes_1.default.BadRequest;
+                            message = "Request does not contain a 'packId' body parameter.";
+                            error = true;
+                        }
+                        else {
+                            if (!_this.requestHasValidId(req)) {
+                                status = HTTPStatusCodes_1.default.BadRequest;
+                                message = "Request does not contain a valid 'packId' query parameter.";
+                                error = true;
+                            }
+                        }
+                        // Run if the data is invalid
+                        if (error) {
+                            return new Promise(function (resolve, reject) {
+                                resolve(_this.createHTTPResponse(status, message));
+                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                            });
+                        }
+                        // Run if data is valid
+                        return _this._dao.editPackByData(req).then(function (response) {
+                            if (!response.acknowledged) {
+                                status = HTTPStatusCodes_1.default.ServerError;
+                                message = "Could not update document: " + req + " due to a database error.";
+                            }
+                            else {
+                                message = JSON.stringify(req);
+                            }
+                            return _this.createHTTPResponse(status, message);
+                        });
+                    })];
+            });
+        });
     };
-    PackController.prototype.isPackEditDataValid = function (data) {
+    PackController.prototype.deletePack = function (req) {
+        return __awaiter(this, void 0, void 0, function () {
+            var status, message, error;
+            var _this = this;
+            return __generator(this, function (_a) {
+                status = HTTPStatusCodes_1.default.Success;
+                error = false;
+                // Connect to the database
+                return [2 /*return*/, this._dao.connectToDb().then(function (connected) {
+                        // Sanitise data
+                        if (!connected) {
+                            status = HTTPStatusCodes_1.default.ServerError;
+                            message = "There was a fatal error with the database.";
+                            error = true;
+                        }
+                        if (!_this.requestContainsId(req)) {
+                            status = HTTPStatusCodes_1.default.BadRequest;
+                            message = "Request does not contain a 'packId' query parameter.";
+                            error = true;
+                        }
+                        else {
+                            if (!_this.requestHasValidId(req)) {
+                                status = HTTPStatusCodes_1.default.BadRequest;
+                                message = "Request does not contain a valid 'packId' query parameter.";
+                                error = true;
+                            }
+                        }
+                        // Run if data is invalid
+                        if (error) {
+                            return new Promise(function (resolve, reject) {
+                                resolve(_this.createHTTPResponse(status, message));
+                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                            });
+                        }
+                        // Run if data is valid
+                        return _this._dao.deletePackById(parseInt(req.packId)).then(function (response) {
+                            if (!response) {
+                                status = HTTPStatusCodes_1.default.NotFound;
+                                message = "No match found for Pack ID: " + req.packId;
+                            }
+                            else {
+                                message = JSON.stringify(response);
+                            }
+                            return _this.createHTTPResponse(status, message);
+                        });
+                    })];
+            });
+        });
+    };
+    PackController.prototype.isEditBodyValid = function (data) {
         var isValid = true;
         var validKeys = [
             "packId",
@@ -226,7 +286,7 @@ var PackController = /** @class */ (function (_super) {
         });
         return isValid;
     };
-    PackController.prototype.isPackBodyValid = function (data) {
+    PackController.prototype.isCreateBodyValid = function (data) {
         var isValid = true;
         var message = [];
         if (!("title" in data)) {
@@ -259,13 +319,6 @@ var PackController = /** @class */ (function (_super) {
         }
         return { valid: isValid, message: message };
     };
-    PackController.prototype.handlePackDAOResponse = function (responseData, action) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, { statusCode: 200, success: true, message: "Pack " + action + " successful" }];
-            });
-        });
-    }; // DEPRECATED!  
     return PackController;
 }(Controller_1.default));
 exports.default = PackController;

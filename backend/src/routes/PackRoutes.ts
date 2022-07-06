@@ -36,8 +36,10 @@ class PackRoutes extends Routes {
     }
 
     override initializeDeleteRoutes(): void {
-        this._server.put(this._url, (req: Express.Request, response: Express.Response) => {
-            console.log("Successful Delete!");
+        this._server.delete(this._url, (req: Express.Request, res: Express.Response) => {
+            this._controller.deletePack(req.query).then(deleteRes => {
+                res.status(deleteRes.statusCode).send(deleteRes);
+            })
         })
     }
 

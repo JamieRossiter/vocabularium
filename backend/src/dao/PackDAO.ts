@@ -1,8 +1,6 @@
 import DAO from "./DAO";
 import Pack from "../utils/Pack";
-import DAOResponse from "../utils/DAOResponse";
-import HTTPStatusCodes from "../utils/HTTPStatusCodes";
-import { InsertOneResult } from "mongodb";
+import { InsertOneResult, UpdateResult } from "mongodb";
 
 class PackDAO extends DAO {
 
@@ -41,21 +39,35 @@ class PackDAO extends DAO {
         })
     }
 
-    // TODO: Make asynchronous
-    public editPackData(editData: any): boolean {
+    public async editPackByData(editData: any): Promise<UpdateResult | Error> {
         const filter: { packId: number } = { packId: parseInt(editData.packId)}
         const updateQuery: { $set: any } = { 
             $set: editData
         }
-        let successful: boolean;
-        try {
-            this.accessDb(this._collectionName, this._client).updateOne(filter, updateQuery); // TODO: Check if any documents were matched with result.matchedCount
-            successful = true;
-        } catch (error: any){
-            console.error(error);
-            successful = false;
-        }
-        return successful;
+        const collection = await this.accessCollection(this._collectionName);
+        return collection.updateOne(filter, updateQuery)
+        .then((result: UpdateResult) => {
+            this._client.close();
+            return result;
+        })
+        .catch((error: Error) => {
+            this._client.close();
+            return error;
+        })
+    }
+
+    public async deletePackById(id: number): Promise<object | Error | null> {
+        const query: { packId: number } = { packId: id };
+        const collection = await this.accessCollection(this._collectionName);
+        return collection.deleteOne(query)
+        .then((result: object | null) => {
+            this._client.close();
+            return result;
+        })
+        .catch((error: Error) => {
+            this._client.close();
+            return error;
+        })
     }
 
 }

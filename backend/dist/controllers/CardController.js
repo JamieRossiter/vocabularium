@@ -56,7 +56,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Controller_1 = __importDefault(require("./Controller"));
 var CardDAO_1 = __importDefault(require("../dao/CardDAO"));
-var RequestActions_1 = __importDefault(require("../utils/RequestActions"));
+var HTTPStatusCodes_1 = __importDefault(require("../utils/HTTPStatusCodes"));
 var CardController = /** @class */ (function (_super) {
     __extends(CardController, _super);
     function CardController() {
@@ -66,89 +66,224 @@ var CardController = /** @class */ (function (_super) {
     }
     CardController.prototype.getCards = function (req) {
         return __awaiter(this, void 0, void 0, function () {
-            var response;
+            var status, message, error;
             var _this = this;
             return __generator(this, function (_a) {
-                if (!this.requestContainsId(req)) {
-                    response = this.handleNonexistentRequestId();
-                }
-                else {
-                    if (!this.requestHasValidId(req)) {
-                        response = this.handleInvalidRequestId();
-                    }
-                    else {
-                        response = this._dao.getCardsByPackId(req.id).then(function (data) {
-                            return _this.handleCardDAOResponse(data, RequestActions_1.default.GET);
+                status = HTTPStatusCodes_1.default.Success;
+                error = false;
+                // Connect to the database
+                return [2 /*return*/, this._dao.connectToDb().then(function (connected) {
+                        // Sanitise data
+                        if (!connected) {
+                            status = HTTPStatusCodes_1.default.ServerError;
+                            message = "There was a fatal error with the database.";
+                            error = true;
+                        }
+                        if (!_this.requestContainsId(req)) {
+                            status = HTTPStatusCodes_1.default.BadRequest;
+                            message = "Request does not contain a 'packId' query parameter.";
+                            error = true;
+                        }
+                        else {
+                            if (!_this.requestHasValidId(req)) {
+                                status = HTTPStatusCodes_1.default.BadRequest;
+                                message = "Request does not contain a valid 'packId' query parameter.";
+                                error = true;
+                            }
+                        }
+                        // Run if data is invalid
+                        if (error) {
+                            return new Promise(function (resolve, reject) {
+                                resolve(_this.createHTTPResponse(status, message));
+                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                            });
+                        }
+                        // Run if data is valid
+                        return _this._dao.findCardsByPackId(parseInt(req.packId)).then(function (response) {
+                            if (!response) {
+                                status = HTTPStatusCodes_1.default.NotFound;
+                                message = "No match found for Cards with Pack ID: " + req.packId;
+                            }
+                            else {
+                                message = JSON.stringify(response);
+                            }
+                            return _this.createHTTPResponse(status, message);
                         });
-                    }
-                }
-                return [2 /*return*/, response];
+                    })];
             });
         });
     };
     CardController.prototype.createCards = function (req) {
-        var response;
-        if (!this.requestContainsId(req)) {
-            response = this.handleNonexistentRequestId();
-        }
-        else {
-            if (!this.requestHasValidId(req)) {
-                response = this.handleInvalidRequestId();
-            }
-            else {
-                var validityObject = this.isCardsDataValid(req);
-                if (!validityObject.valid) {
-                    response = this.handleInvalidRequestParamsOrBody(validityObject.message);
-                }
-                else {
-                    if (this._dao.createNewCards(req)) {
-                        response = this.handleCardDAOResponse(null, RequestActions_1.default.POST);
-                    }
-                    else {
-                        response = this.handleDatabaseIssue(RequestActions_1.default.POST);
-                    }
-                }
-            }
-        }
-        return response;
-    };
-    CardController.prototype.editCards = function (req) {
-        var response;
-        if (!this.requestContainsId(req)) {
-            response = this.handleNonexistentRequestId();
-        }
-        else {
-            if (!this.requestHasValidId(req)) {
-                response = this.handleInvalidRequestId();
-            }
-            else {
-                if (!this.requestContainsCardsData(req)) {
-                    response = this.handleNonExistentCardsData();
-                }
-                else {
-                    if (!this.isCardsEditDataValid(req.cards)) {
-                        response = this.handleInvalidRequestParamsOrBody(["Request contains invalid body parameter(s) for cards"]);
-                    }
-                    else {
-                        if (this._dao.editCardsData(req)) {
-                            response = this.handleCardDAOResponse(null, RequestActions_1.default.PUT);
+        return __awaiter(this, void 0, void 0, function () {
+            var status, message, error;
+            var _this = this;
+            return __generator(this, function (_a) {
+                status = HTTPStatusCodes_1.default.Success;
+                error = false;
+                return [2 /*return*/, this._dao.connectToDb().then(function (connected) {
+                        // Sanitise data
+                        var validatedBody = _this.isCreateBodyValid(req);
+                        if (!validatedBody.valid) {
+                            status = HTTPStatusCodes_1.default.BadRequest;
+                            message = validatedBody.message.toString();
+                            error = true;
+                        }
+                        if (!connected) {
+                            status = HTTPStatusCodes_1.default.ServerError;
+                            message = "There was a fatal error with the database.";
+                            error = true;
+                        }
+                        if (!_this.requestContainsCardsData(req)) { // Note: When refactoring, be aware that this is a unique sanitisation method for Cards
+                            status = HTTPStatusCodes_1.default.BadRequest;
+                            message = "Request does not contain card data.";
+                            error = true;
+                        }
+                        if (!_this.requestContainsId(req)) {
+                            status = HTTPStatusCodes_1.default.BadRequest;
+                            message = "Request does not contain a 'packId' body parameter.";
+                            error = true;
                         }
                         else {
-                            response = this.handleDatabaseIssue(RequestActions_1.default.PUT);
+                            if (!_this.requestHasValidId(req)) {
+                                status = HTTPStatusCodes_1.default.BadRequest;
+                                message = "Request does not contain a valid 'packId' query parameter.";
+                                error = true;
+                            }
                         }
-                    }
-                }
-            }
-        }
-        return response;
+                        // Run if the data is invalid
+                        if (error) {
+                            return new Promise(function (resolve, reject) {
+                                resolve(_this.createHTTPResponse(status, message));
+                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                            });
+                        }
+                        // Run if data is valid
+                        return _this._dao.insertCardsByData(req).then(function (response) {
+                            if (!response.acknowledged) {
+                                status = HTTPStatusCodes_1.default.ServerError;
+                                message = "Could not insert document: " + req + " due to a database error.";
+                            }
+                            else {
+                                message = JSON.stringify(req);
+                            }
+                            return _this.createHTTPResponse(status, message);
+                        });
+                    })];
+            });
+        });
+    };
+    CardController.prototype.editCards = function (req) {
+        return __awaiter(this, void 0, void 0, function () {
+            var status, message, error;
+            var _this = this;
+            return __generator(this, function (_a) {
+                status = HTTPStatusCodes_1.default.Success;
+                error = false;
+                return [2 /*return*/, this._dao.connectToDb().then(function (connected) {
+                        // Sanitise data
+                        var validatedBody = _this.isEditBodyValid(req);
+                        if (!validatedBody) {
+                            status = HTTPStatusCodes_1.default.BadRequest;
+                            message = "Request does not contain a valid body.";
+                            error = true;
+                        }
+                        if (!connected) {
+                            status = HTTPStatusCodes_1.default.ServerError;
+                            message = "There was a fatal error with the database.";
+                            error = true;
+                        }
+                        if (!_this.requestContainsId(req)) {
+                            status = HTTPStatusCodes_1.default.BadRequest;
+                            message = "Request does not contain a 'packId' body parameter.";
+                            error = true;
+                        }
+                        else {
+                            if (!_this.requestHasValidId(req)) {
+                                status = HTTPStatusCodes_1.default.BadRequest;
+                                message = "Request does not contain a valid 'packId' query parameter.";
+                                error = true;
+                            }
+                        }
+                        // Run if the data is invalid
+                        if (error) {
+                            return new Promise(function (resolve, reject) {
+                                resolve(_this.createHTTPResponse(status, message));
+                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                            });
+                        }
+                        // Run if data is valid
+                        return _this._dao.editCardsByData(req).then(function (response) {
+                            if (!response.acknowledged) {
+                                status = HTTPStatusCodes_1.default.ServerError;
+                                message = "Could not update document: " + req + " due to a database error.";
+                            }
+                            else {
+                                message = JSON.stringify(req);
+                            }
+                            return _this.createHTTPResponse(status, message);
+                        });
+                    })];
+            });
+        });
+    };
+    CardController.prototype.deleteCards = function (req) {
+        return __awaiter(this, void 0, void 0, function () {
+            var status, message, error;
+            var _this = this;
+            return __generator(this, function (_a) {
+                status = HTTPStatusCodes_1.default.Success;
+                error = false;
+                // Connect to the database
+                return [2 /*return*/, this._dao.connectToDb().then(function (connected) {
+                        // Sanitise data
+                        if (!connected) {
+                            status = HTTPStatusCodes_1.default.ServerError;
+                            message = "There was a fatal error with the database.";
+                            error = true;
+                        }
+                        if (!_this.requestContainsId(req)) {
+                            status = HTTPStatusCodes_1.default.BadRequest;
+                            message = "Request does not contain a 'packId' query parameter.";
+                            error = true;
+                        }
+                        else {
+                            if (!_this.requestHasValidId(req)) {
+                                status = HTTPStatusCodes_1.default.BadRequest;
+                                message = "Request does not contain a valid 'packId' query parameter.";
+                                error = true;
+                            }
+                        }
+                        // Run if data is invalid
+                        if (error) {
+                            return new Promise(function (resolve, reject) {
+                                resolve(_this.createHTTPResponse(status, message));
+                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                            });
+                        }
+                        // Run if data is valid
+                        return _this._dao.deleteCardsById(parseInt(req.packId)).then(function (response) {
+                            if (!response) {
+                                status = HTTPStatusCodes_1.default.NotFound;
+                                message = "No match found for Pack ID: " + req.packId;
+                            }
+                            else {
+                                message = JSON.stringify(response);
+                            }
+                            return _this.createHTTPResponse(status, message);
+                        });
+                    })];
+            });
+        });
     };
     CardController.prototype.requestContainsCardsData = function (req) {
         return "cards" in req;
     };
-    CardController.prototype.isCardsEditDataValid = function (data) {
+    CardController.prototype.isEditBodyValid = function (data) {
         var isValid = true;
         var validKeys = [
+            "packId",
             "cardId",
+            "cards",
             "translated",
             "untranslated"
         ];
@@ -159,7 +294,7 @@ var CardController = /** @class */ (function (_super) {
         });
         return isValid;
     };
-    CardController.prototype.isCardsDataValid = function (data) {
+    CardController.prototype.isCreateBodyValid = function (data) {
         var isValid = true;
         var message = [];
         if (!("cards" in data)) {
@@ -184,23 +319,6 @@ var CardController = /** @class */ (function (_super) {
             }
         });
         return { valid: isValid, message: message };
-    };
-    CardController.prototype.handleCardDAOResponse = function (responseData, action) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, { statusCode: 200, success: true, message: "Cards " + action + " successful" }];
-            });
-        });
-    };
-    CardController.prototype.handleNonExistentCardsData = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, { statusCode: 400, success: true, message: "Request does not contain cards data" }];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
     };
     return CardController;
 }(Controller_1.default));

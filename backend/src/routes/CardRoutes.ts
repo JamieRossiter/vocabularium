@@ -1,7 +1,6 @@
 import Routes from "./Routes";
 import Express from "express";
 import CardController from "../controllers/CardController"
-import { Cards } from "../utils/Cards";
 
 class CardRoutes extends Routes {
 
@@ -37,8 +36,10 @@ class CardRoutes extends Routes {
     }
 
     override initializeDeleteRoutes(): void {
-        this._server.put(this._url, (req: Express.Request, response: Express.Response) => {
-            console.log("Successful Delete!");
+        this._server.delete(this._url, (req: Express.Request, res: Express.Response) => {
+            this._controller.deleteCards(req.query).then(deleteRes => {
+                res.status(deleteRes.statusCode).send(deleteRes);
+            })
         })
     }
 

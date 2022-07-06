@@ -110,25 +110,56 @@ var PackDAO = /** @class */ (function (_super) {
             });
         });
     };
-    // TODO: Make asynchronous
-    PackDAO.prototype.editPackData = function (editData) {
-        var filter = { packId: parseInt(editData.packId) };
-        var updateQuery = {
-            $set: editData
-        };
-        var successful;
-        try {
-            this.accessDb(this._collectionName, this._client).updateOne(filter, updateQuery); // TODO: Check if any documents were matched with result.matchedCount
-            successful = true;
-        }
-        catch (error) {
-            console.error(error);
-            successful = false;
-        }
-        return successful;
+    PackDAO.prototype.editPackByData = function (editData) {
+        return __awaiter(this, void 0, void 0, function () {
+            var filter, updateQuery, collection;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        filter = { packId: parseInt(editData.packId) };
+                        updateQuery = {
+                            $set: editData
+                        };
+                        return [4 /*yield*/, this.accessCollection(this._collectionName)];
+                    case 1:
+                        collection = _a.sent();
+                        return [2 /*return*/, collection.updateOne(filter, updateQuery)
+                                .then(function (result) {
+                                _this._client.close();
+                                return result;
+                            })
+                                .catch(function (error) {
+                                _this._client.close();
+                                return error;
+                            })];
+                }
+            });
+        });
     };
-    PackDAO.prototype.generatePack = function (data) {
-        return { packId: data.id, title: data.title, dateCreated: data.dateCreated, description: data.description, languageOptions: { languageLonghand: data.languageOptions.languageLonghand, languageShorthand: data.languageOptions.languageShorthand, countryCode: data.languageOptions.countryCode } };
+    PackDAO.prototype.deletePackById = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, collection;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        query = { packId: id };
+                        return [4 /*yield*/, this.accessCollection(this._collectionName)];
+                    case 1:
+                        collection = _a.sent();
+                        return [2 /*return*/, collection.deleteOne(query)
+                                .then(function (result) {
+                                _this._client.close();
+                                return result;
+                            })
+                                .catch(function (error) {
+                                _this._client.close();
+                                return error;
+                            })];
+                }
+            });
+        });
     };
     return PackDAO;
 }(DAO_1.default));
