@@ -51,7 +51,7 @@ class CardController extends Controller {
             }
 
             // Run if data is valid
-            return this._dao.findCardsByPackId(parseInt(req.packId)).then((response: object | null | Error) => {
+            return this._dao.findCardsByPackId(req.packId).then((response: object | null | Error) => {
                 if(!response){
                     status = HTTPStatusCodes.NotFound;
                     message = `No match found for Cards with Pack ID: ${req.packId}`
@@ -211,7 +211,7 @@ class CardController extends Controller {
             }
 
             // Run if data is valid
-            return this._dao.deleteCardsById(parseInt(req.packId)).then((response: object | null | Error) => {
+            return this._dao.deleteCardsById(req.packId).then((response: object | null | Error) => {
                 if(!response){
                     status = HTTPStatusCodes.NotFound;
                     message = `No match found for Pack ID: ${req.packId}`

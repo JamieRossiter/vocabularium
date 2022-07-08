@@ -8,16 +8,24 @@ type CharacterCountInputs = {
     description: number
 }
 
-const CreatePackDetails = () => {
+type CreatePackDetailsProps = {
+    handleDetailChange: Function
+}
+
+const CreatePackDetails = (props: CreatePackDetailsProps) => {
     
     const MAX_CHARACTERS: CharacterCountInputs = { title: 30, description: 50 }
     const [inputCharacterCount, updateInputCharacterCount] = React.useState<CharacterCountInputs>({title: 0, description: 0});
 
     // Input validation
-
     function handleInputChange(value: string, inputType: string): void {
-        if(inputType === "title") updateInputCharacterCount({title: value.length, description: inputCharacterCount.description});
-        else if(inputType === "description") updateInputCharacterCount({title: inputCharacterCount.title, description: value.length})
+        if(inputType === "title"){
+            updateInputCharacterCount({title: value.length, description: inputCharacterCount.description});  
+        }
+        else if(inputType === "description"){
+            updateInputCharacterCount({title: inputCharacterCount.title, description: value.length});
+        }
+        props.handleDetailChange(value, inputType); // Execute detail change handler for parent component
     }
 
     function characterCountExceeded(charCount: number, inputType: string): boolean {
@@ -27,9 +35,14 @@ const CreatePackDetails = () => {
         return charCount > maxCharCount;
     }
 
+    // Handle language selection
+    function handleLanguageSelection(languageOptions: string): void {
+        props.handleDetailChange(languageOptions, "language"); // Send selected language back to parent component
+    }
+
     return(
         <>
-            <LanguageDropdown  />
+            <LanguageDropdown handleLanguageSelection={handleLanguageSelection.bind(this)}  />
             <div className="card-pack-details-input-container">
                 <TextField error={characterCountExceeded(inputCharacterCount.title, "title")} onChange={(e) => { handleInputChange(e.target.value, "title") } } variant="outlined" label="Title" className="card-pack-details-input" InputProps={{
                     endAdornment: <InputAdornment position="end">{inputCharacterCount.title}/{MAX_CHARACTERS.title}</InputAdornment>

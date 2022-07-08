@@ -45,10 +45,7 @@ var Controller = /** @class */ (function () {
     }
     Controller.prototype.idIsValid = function (id) {
         var isValid = true;
-        if (isNaN(id)) {
-            isValid = false;
-        }
-        if (!(id.toString().length > 0 && id.toString().length < 6)) {
+        if (!(id.length > 0)) {
             isValid = false;
         }
         return isValid;

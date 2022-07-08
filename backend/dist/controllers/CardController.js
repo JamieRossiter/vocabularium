@@ -99,7 +99,7 @@ var CardController = /** @class */ (function (_super) {
                             });
                         }
                         // Run if data is valid
-                        return _this._dao.findCardsByPackId(parseInt(req.packId)).then(function (response) {
+                        return _this._dao.findCardsByPackId(req.packId).then(function (response) {
                             if (!response) {
                                 status = HTTPStatusCodes_1.default.NotFound;
                                 message = "No match found for Cards with Pack ID: " + req.packId;
@@ -261,7 +261,7 @@ var CardController = /** @class */ (function (_super) {
                             });
                         }
                         // Run if data is valid
-                        return _this._dao.deleteCardsById(parseInt(req.packId)).then(function (response) {
+                        return _this._dao.deleteCardsById(req.packId).then(function (response) {
                             if (!response) {
                                 status = HTTPStatusCodes_1.default.NotFound;
                                 message = "No match found for Pack ID: " + req.packId;

@@ -18,18 +18,23 @@ const PackView = (props: PackViewProps) => {
     // Fetch pack data
     React.useEffect(() => {
         setTimeout(() => {
-            fetch("/dummyData/dummy_pack.json", { method: "GET" })
+            fetch(`http://localhost:5000/pack?packId=${props.packId}`, { method: "GET" })
             .then(response => response.json())
-            .then(data => updatePackData(data));
+            .then(data => {
+                updatePackData(JSON.parse(data.message))
+            });
         }, 3000)
     }, [])
 
     // Fetch cards data
     React.useEffect(() => {
         setTimeout(() => {
-            fetch("/dummyData/dummy_cards.json", { method: "GET" })
+            fetch(`http://localhost:5000/cards?packId=${props.packId}`, { method: "GET" })
             .then(response => response.json())
-            .then(data => updateCardsData(data.cards));
+            .then(data => {
+                console.log(JSON.parse(data.message).cards);
+                updateCardsData(JSON.parse(data.message).cards)
+            });
         }, 3000)
     }, [])
 

@@ -4,12 +4,9 @@ import HTTPStatusCodes from "../utils/HTTPStatusCodes";
 
 class Controller {
 
-    private idIsValid(id: number): boolean{
+    private idIsValid(id: string): boolean{
         let isValid: boolean = true;
-        if(isNaN(id)){
-            isValid = false
-        }
-        if(!(id.toString().length > 0 && id.toString().length < 6)){
+        if(!(id.length > 0)){
             isValid = false
         }
         return isValid;

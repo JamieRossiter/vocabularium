@@ -1,10 +1,11 @@
 export type Card = {
+    cardId: number,
     untranslated: string,
     translated: string
 }
 
 export type Pack = {
-    id: string,
+    packId: string,
     title: string,
     dateCreated: string,
     description: string,
@@ -12,6 +13,5 @@ export type Pack = {
         languageLonghand: string,
         languageShorthand: string,
         countryCode: string
-    },
-    cards: string
+    }
 }

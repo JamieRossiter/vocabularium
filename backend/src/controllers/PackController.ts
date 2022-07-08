@@ -49,7 +49,7 @@ class PackController extends Controller {
             }
 
             // Run if data is valid
-            return this._dao.findPackById(parseInt(req.packId)).then((response: object | null | Error) => {
+            return this._dao.findPackById(req.packId).then((response: object | null | Error) => {
                 if(!response){
                     status = HTTPStatusCodes.NotFound;
                     message = `No match found for Pack ID: ${req.packId}`
@@ -204,7 +204,7 @@ class PackController extends Controller {
             }
 
             // Run if data is valid
-            return this._dao.deletePackById(parseInt(req.packId)).then((response: object | null | Error) => {
+            return this._dao.deletePackById(req.packId).then((response: object | null | Error) => {
                 if(!response){
                     status = HTTPStatusCodes.NotFound;
                     message = `No match found for Pack ID: ${req.packId}`

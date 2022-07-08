@@ -99,7 +99,7 @@ var PackController = /** @class */ (function (_super) {
                             });
                         }
                         // Run if data is valid
-                        return _this._dao.findPackById(parseInt(req.packId)).then(function (response) {
+                        return _this._dao.findPackById(req.packId).then(function (response) {
                             if (!response) {
                                 status = HTTPStatusCodes_1.default.NotFound;
                                 message = "No match found for Pack ID: " + req.packId;
@@ -256,7 +256,7 @@ var PackController = /** @class */ (function (_super) {
                             });
                         }
                         // Run if data is valid
-                        return _this._dao.deletePackById(parseInt(req.packId)).then(function (response) {
+                        return _this._dao.deletePackById(req.packId).then(function (response) {
                             if (!response) {
                                 status = HTTPStatusCodes_1.default.NotFound;
                                 message = "No match found for Pack ID: " + req.packId;

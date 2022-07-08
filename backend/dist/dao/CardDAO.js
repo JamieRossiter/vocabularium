@@ -110,6 +110,8 @@ var CardDAO = /** @class */ (function (_super) {
             });
         });
     };
+    // Note: updating cards requires both the translated and the untranslated fields to be "updated", even if only one of them needs to be. Failure to do so will
+    // result in the omitted field being removed from the record altogether. 
     CardDAO.prototype.editCardsByData = function (editData) {
         return __awaiter(this, void 0, void 0, function () {
             var filter, updateQuery, collection;
