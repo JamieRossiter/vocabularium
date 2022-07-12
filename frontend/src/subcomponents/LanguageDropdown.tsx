@@ -39,7 +39,7 @@ const LanguageDropdown = (props: LanguageDropdownProps) => {
                 <FormControl fullWidth>
                     <Select variant="outlined" autoWidth value={selectedLanguageValue} onChange={(e) => { handleSelectedLanguageChange(e.target.value as string) }}>
                         <MenuItem value="ID"><Flag className="language-dropdown-lang-flag" code="ID" size="m" />Indonesian</MenuItem>
-                        <MenuItem value="CN"><Flag className="language-dropdown-lang-flag" code="CN" size="m" />Mandarin</MenuItem>
+                        <MenuItem value="IT"><Flag className="language-dropdown-lang-flag" code="IT" size="m" />Italian</MenuItem>
                     </Select>
                 </FormControl>
             </div>

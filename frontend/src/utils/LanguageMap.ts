@@ -1,5 +1,5 @@
 const LanguageMap: Record<string, { lh: string, sh: string }> = {
-    "CN": { lh: "Mandarin", sh: "MAN"},
+    "IT": { lh: "Italian", sh: "ITA"},
     "ID": { lh: "Indonesian", sh: "IND" }
 }
 
