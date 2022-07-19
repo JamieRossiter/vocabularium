@@ -95,14 +95,14 @@ var PackController = /** @class */ (function (_super) {
                         if (error) {
                             return new Promise(function (resolve, reject) {
                                 resolve(_this.createHTTPResponse(status, message));
-                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                                reject(new Error("Error resolving promise pertaining to following response: ".concat(message)));
                             });
                         }
                         // Run if data is valid
                         return _this._dao.findPackById(req.packId).then(function (response) {
                             if (!response) {
                                 status = HTTPStatusCodes_1.default.NotFound;
-                                message = "No match found for Pack ID: " + req.packId;
+                                message = "No match found for Pack ID: ".concat(req.packId);
                             }
                             else {
                                 message = JSON.stringify(response);
@@ -149,14 +149,14 @@ var PackController = /** @class */ (function (_super) {
                         if (error) {
                             return new Promise(function (resolve, reject) {
                                 resolve(_this.createHTTPResponse(status, message));
-                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                                reject(new Error("Error resolving promise pertaining to following response: ".concat(message)));
                             });
                         }
                         // Run if data is valid
                         return _this._dao.insertPackByData(req).then(function (response) {
                             if (!response.acknowledged) {
                                 status = HTTPStatusCodes_1.default.ServerError;
-                                message = "Could not insert document: " + req + " due to a database error.";
+                                message = "Could not insert document: ".concat(req, " due to a database error.");
                             }
                             else {
                                 message = JSON.stringify(req);
@@ -203,14 +203,14 @@ var PackController = /** @class */ (function (_super) {
                         if (error) {
                             return new Promise(function (resolve, reject) {
                                 resolve(_this.createHTTPResponse(status, message));
-                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                                reject(new Error("Error resolving promise pertaining to following response: ".concat(message)));
                             });
                         }
                         // Run if data is valid
                         return _this._dao.editPackByData(req).then(function (response) {
                             if (!response.acknowledged) {
                                 status = HTTPStatusCodes_1.default.ServerError;
-                                message = "Could not update document: " + req + " due to a database error.";
+                                message = "Could not update document: ".concat(req, " due to a database error.");
                             }
                             else {
                                 message = JSON.stringify(req);
@@ -252,14 +252,14 @@ var PackController = /** @class */ (function (_super) {
                         if (error) {
                             return new Promise(function (resolve, reject) {
                                 resolve(_this.createHTTPResponse(status, message));
-                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                                reject(new Error("Error resolving promise pertaining to following response: ".concat(message)));
                             });
                         }
                         // Run if data is valid
                         return _this._dao.deletePackById(req.packId).then(function (response) {
                             if (!response) {
                                 status = HTTPStatusCodes_1.default.NotFound;
-                                message = "No match found for Pack ID: " + req.packId;
+                                message = "No match found for Pack ID: ".concat(req.packId);
                             }
                             else {
                                 message = JSON.stringify(response);

@@ -94,7 +94,7 @@ var Controller = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, { statusCode: 500, success: true, message: action + " request was unsuccessful due to a database issue" }];
+                    case 0: return [4 /*yield*/, { statusCode: 500, success: true, message: "".concat(action, " request was unsuccessful due to a database issue") }];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });

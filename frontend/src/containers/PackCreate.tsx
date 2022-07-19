@@ -50,20 +50,15 @@ const PackCreate = () => {
             languageOptions: JSON.parse(packDetails.language)
         }
 
-        // Translate word list - returns a promise
-        translateSelectedWords()
-        .then(translatedWords => {
+        // Cards object to send to database
+        // const cardsObj: CardsObject = {
+        //     packId: generatedPackId,
+        //     cards: wordList.map((word, index) => { return { cardId: index, translated: translatedWords[index], untranslated: word } })
+        // }
 
-            // // Cards object to send to database
-            // const cardsObj: CardsObject = {
-            //     packId: generatedPackId,
-            //     cards: wordList.map((word, index) => { return { cardId: index, translated: translatedWords[index], untranslated: word } })
-            // }
-
-            // // Post all data
-            // postPackData(packObj);
-            // postCardsData(cardsObj);
-        })
+        // Post all data
+        // postPackData(packObj);
+        // postCardsData(cardsObj);
     }
 
     // Post pack data to server
@@ -95,34 +90,6 @@ const PackCreate = () => {
         .then(res => res.json())
         .then(data => console.log(data) ) // TODO: Display message indicating successful POST
 
-    }
-
-    // Translate the selected words into the chosen language
-    async function translateSelectedWords(): Promise<Array<string>> {
-
-        const translateBody = JSON.stringify({
-            q: convertWordListToCommaSeparatedString(wordList), // convert array to string so that multiple words can be translated in one API call
-            source: "en",
-            target: JSON.parse(packDetails.language).countryCode,
-            format: "text"
-        })
-
-        // Translate word list using LibreTranslate API
-        return await fetch("https://libretranslate.com/translate", {
-            method: "POST",
-            body: translateBody,
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        })
-        .then(res => res.json())
-        .then (translateData => {
-            // Convert translated string back into array
-            console.log(translateData);
-            return translateData;
-            // return convertCommaSeparatedWordListToArray(translateData.translatedText);
-        })
     }
 
     function convertWordListToCommaSeparatedString(list: Array<string>) : string {

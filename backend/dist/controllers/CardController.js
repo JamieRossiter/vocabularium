@@ -95,14 +95,14 @@ var CardController = /** @class */ (function (_super) {
                         if (error) {
                             return new Promise(function (resolve, reject) {
                                 resolve(_this.createHTTPResponse(status, message));
-                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                                reject(new Error("Error resolving promise pertaining to following response: ".concat(message)));
                             });
                         }
                         // Run if data is valid
                         return _this._dao.findCardsByPackId(req.packId).then(function (response) {
                             if (!response) {
                                 status = HTTPStatusCodes_1.default.NotFound;
-                                message = "No match found for Cards with Pack ID: " + req.packId;
+                                message = "No match found for Cards with Pack ID: ".concat(req.packId);
                             }
                             else {
                                 message = JSON.stringify(response);
@@ -154,14 +154,14 @@ var CardController = /** @class */ (function (_super) {
                         if (error) {
                             return new Promise(function (resolve, reject) {
                                 resolve(_this.createHTTPResponse(status, message));
-                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                                reject(new Error("Error resolving promise pertaining to following response: ".concat(message)));
                             });
                         }
                         // Run if data is valid
                         return _this._dao.insertCardsByData(req).then(function (response) {
                             if (!response.acknowledged) {
                                 status = HTTPStatusCodes_1.default.ServerError;
-                                message = "Could not insert document: " + req + " due to a database error.";
+                                message = "Could not insert document: ".concat(req, " due to a database error.");
                             }
                             else {
                                 message = JSON.stringify(req);
@@ -208,14 +208,14 @@ var CardController = /** @class */ (function (_super) {
                         if (error) {
                             return new Promise(function (resolve, reject) {
                                 resolve(_this.createHTTPResponse(status, message));
-                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                                reject(new Error("Error resolving promise pertaining to following response: ".concat(message)));
                             });
                         }
                         // Run if data is valid
                         return _this._dao.editCardsByData(req).then(function (response) {
                             if (!response.acknowledged) {
                                 status = HTTPStatusCodes_1.default.ServerError;
-                                message = "Could not update document: " + req + " due to a database error.";
+                                message = "Could not update document: ".concat(req, " due to a database error.");
                             }
                             else {
                                 message = JSON.stringify(req);
@@ -257,14 +257,14 @@ var CardController = /** @class */ (function (_super) {
                         if (error) {
                             return new Promise(function (resolve, reject) {
                                 resolve(_this.createHTTPResponse(status, message));
-                                reject(new Error("Error resolving promise pertaining to following response: " + message));
+                                reject(new Error("Error resolving promise pertaining to following response: ".concat(message)));
                             });
                         }
                         // Run if data is valid
                         return _this._dao.deleteCardsById(req.packId).then(function (response) {
                             if (!response) {
                                 status = HTTPStatusCodes_1.default.NotFound;
-                                message = "No match found for Pack ID: " + req.packId;
+                                message = "No match found for Pack ID: ".concat(req.packId);
                             }
                             else {
                                 message = JSON.stringify(response);

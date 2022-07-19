@@ -7,7 +7,7 @@ class DAO {
     protected _dbName: string;
     
     constructor(){
-        this._uri = "mongodb://127.0.0.1:27017";
+        this._uri = "mongodb://database:27017";
         this._client = new MongoClient(this._uri);
         this._dbName = "vocabularium";
     }
